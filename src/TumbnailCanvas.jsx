@@ -12,6 +12,7 @@ class TumbnailCanvas extends React.Component{
         this.imagePaste=this.imagePaste.bind(this)
         this.draw=this.draw.bind(this)
         this.scrollHandler=this.scrollHandler.bind(this)
+        this.mouseMoveEvent=this.mouseMoveEvent.bind(this)
 
         this.rtvLogo=new Image()
         this.rtvLogo.src='../../logoRtv.png'
@@ -26,6 +27,9 @@ class TumbnailCanvas extends React.Component{
             image:null,
             imageShow:null
         }
+
+        this.mouseX=null;
+        this.mouseY=null
     }
 
 
@@ -133,8 +137,6 @@ class TumbnailCanvas extends React.Component{
 
         var width=250
         ctx.drawImage(this.rtvLogo,950,20,width,(width*206)/878)
-
-
     }
 
 
@@ -148,13 +150,23 @@ class TumbnailCanvas extends React.Component{
         this.imageInfo.width *=extra
         this.imageInfo.height*=extra
         this.draw()
-        console.log(this.imageInfo)
     }
 
-    dragHandler(event){
-        console.log(event)
-
+    mouseMoveEvent(event){
+       if(event.buttons===1){
+           if(this.mouseX!==null){
+               this.imageInfo.x-=this.mouseX-event.clientX
+               this.imageInfo.y-=this.mouseY-event.clientY
+               this.draw()
+           }
+               this.mouseX=event.clientX
+               this.mouseY=event.clientY
+       }else{
+           this.mouseX=null
+           this.mouseY=null
+       }
     }
+
 
     render() {
         return(
@@ -164,12 +176,10 @@ class TumbnailCanvas extends React.Component{
                     <input type="file" name="image" value={this.state.image} onChange={this.handleInputChange}/>
                 </form>
                 <button onClick={this.imagePaste}>Image van Klembord</button>
-
-                <canvas style={{border: '2px solid black'}} width="1280px" height="720px" onWheel={this.scrollHandler} on ref={this.inputRef}></canvas>
+                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onWheel={this.scrollHandler}  onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
                 <button onClick={()=>
                 {
                     var canvas=this.inputRef.current
-
                     var link=document.createElement('a')
                     document.body.appendChild(link)
                     link.href=canvas.toDataURL()

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="083a121b-0f8f-4acc-b28d-c0836a7f5731" name="Default Changelist" comment="" />
+    <list default="true" id="083a121b-0f8f-4acc-b28d-c0836a7f5731" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +26,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/public" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -34,12 +37,12 @@
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\public" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\public" />
       <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\src" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\public" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -54,7 +57,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="npm.deploy">
+  <component name="RunManager" selected="npm.build">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
@@ -90,8 +93,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.deploy" />
         <item itemvalue="npm.build" />
+        <item itemvalue="npm.deploy" />
       </list>
     </recent_temporary>
   </component>
@@ -107,7 +110,11 @@
       <updated>1566723927227</updated>
       <workItem from="1566723929718" duration="134000" />
       <workItem from="1566724066573" duration="15544000" />
-      <workItem from="1566751754353" duration="12108000" />
+      <workItem from="1566751754353" duration="12614000" />
+      <workItem from="1566831032983" duration="75000" />
+      <workItem from="1566839433900" duration="3921000" />
+      <workItem from="1566845339540" duration="1643000" />
+      <workItem from="1566848947034" duration="1003000" />
     </task>
     <servers />
   </component>
