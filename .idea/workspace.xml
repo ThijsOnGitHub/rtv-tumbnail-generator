@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="083a121b-0f8f-4acc-b28d-c0836a7f5731" name="Default Changelist" comment="" />
+    <list default="true" id="083a121b-0f8f-4acc-b28d-c0836a7f5731" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +35,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
+    <property name="settings.editor.selected.configurable" value="liveEdit" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -54,7 +58,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="npm.build">
+  <component name="RunManager" selected="npm.deploy">
     <configuration name="Debug Application" type="JavascriptDebugType" uri="http://localhost:3000">
       <method v="2" />
     </configuration>
@@ -90,8 +94,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.build" />
         <item itemvalue="npm.deploy" />
+        <item itemvalue="npm.build" />
       </list>
     </recent_temporary>
   </component>
@@ -111,7 +115,8 @@
       <workItem from="1566831032983" duration="75000" />
       <workItem from="1566839433900" duration="3921000" />
       <workItem from="1566845339540" duration="1643000" />
-      <workItem from="1566848947034" duration="1278000" />
+      <workItem from="1566848947034" duration="1541000" />
+      <workItem from="1566900402736" duration="5997000" />
     </task>
     <servers />
   </component>

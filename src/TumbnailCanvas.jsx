@@ -34,13 +34,36 @@ class TumbnailCanvas extends React.Component{
 
 
     handleInputChange(event) {
-        const target = event.target;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        const name = target.name;
+        var target = event.target;
+        var value = target.type === 'checkbox' ? target.checked : target.value;
+        var name = target.name;
 
-        this.setState({
-            [name]: value
-        }, this.draw)
+        if(name==="imageShow" &&event.target.files[0].type.includes("image")){
+            var preview = document.querySelector('img');
+            var file    = document.querySelector('input[type=file]').files[0];
+            var reader  = new FileReader();
+
+            reader.addEventListener("load",  ()=> {
+                this.changeDrawImage(reader.result)
+                value = reader.result;
+                this.setState({
+                    [name]: value
+                })
+            }, false);
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+
+        }else{
+            this.setState({
+                [name]: value
+            }, this.draw)
+
+        }
+
+
+
     }
 
     changeDrawImage(url){
@@ -167,27 +190,37 @@ class TumbnailCanvas extends React.Component{
        }
     }
 
+    dowloaden(){
+        var canvas=this.inputRef.current
+        var link=document.createElement('a')
+        document.body.appendChild(link)
+        link.href=canvas.toDataURL()
+        link.download=`Banner ${this.state.title}.png`
+        link.click()
+        document.body.removeChild(link)
+    }
 
     render() {
         return(
-            <div>
-                <form>
-                    <input type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/>
-                    <input type="file" name="image" value={this.state.image} onChange={this.handleInputChange}/>
-                </form>
-                <button onClick={this.imagePaste}>Image van Klembord</button>
+            <div className="ThumbnailPage">
+                <header>
+                    <ol className="uitleg">
+                        <li>Kopieër een bestand en klik op Afbeelding van klembord of upload een Afbeelding door de knop 'Bestand Kiezen' om een achtergrond te kiezen.</li>
+                        <li>Scroll over de Afbeelding om hem groter te maken en sleep de afbeelding om het te verplaatsen.</li>
+                        <li>Vul een titel in om de tekst te veranderen</li>
+                        <li>klik op dowload Tumbnail om hem te dowloaden</li>
+                    </ol>
+
+                    <div className="editFields">
+                        <label>Thumbnail Text: <input type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
+                        <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" value={this.state.image} onChange={this.handleInputChange}/></label>
+                        <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}>Afbeedling van klembord</button></label>
+                    </div>
+                </header>
                 <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onWheel={this.scrollHandler}  onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
-                <button onClick={()=>
-                {
-                    var canvas=this.inputRef.current
-                    var link=document.createElement('a')
-                    document.body.appendChild(link)
-                    link.href=canvas.toDataURL()
-                    link.download=`Banner ${this.state.title}.png`
-                    link.click()
-                    document.body.removeChild(link)
-                }
-                }>Download Banner</button>
+                <footer>
+                    <button onClick={this.dowloaden}>Download Thumbnail</button>
+                </footer>
             </div>
 
         )
