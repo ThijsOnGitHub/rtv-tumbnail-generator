@@ -5,7 +5,7 @@ class TumbnailCanvas extends React.Component{
 
     constructor(){
         super()
-        this.mouseDown=false
+        this.mouseDown=[]
         this.inputRef = React.createRef();
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -14,6 +14,7 @@ class TumbnailCanvas extends React.Component{
         this.scrollHandler=this.scrollHandler.bind(this)
         this.mouseMoveEvent=this.mouseMoveEvent.bind(this)
         this.dowloaden=this.dowloaden.bind(this)
+        this.clearAllInterVals=this.clearAllInterVals.bind(this)
 
         this.rtvLogo=new Image()
         this.rtvLogo.src='../../logoRtv.png'
@@ -39,23 +40,26 @@ class TumbnailCanvas extends React.Component{
         var value = target.type === 'checkbox' ? target.checked : target.value;
         var name = target.name;
 
-        if(name==="imageShow" &&event.target.files[0].type.includes("image")){
-            var preview = document.querySelector('img');
-            var file    = document.querySelector('input[type=file]').files[0];
-            var reader  = new FileReader();
+        if(name==="imageShow" ){
+            if(event.target.files[0].type.includes("image")) {
+                var preview = document.querySelector('img');
+                var file = document.querySelector('input[type=file]').files[0];
+                var reader = new FileReader();
 
-            reader.addEventListener("load",  ()=> {
-                this.changeDrawImage(reader.result)
-                value = reader.result;
-                this.setState({
-                    [name]: value
-                })
-            }, false);
+                reader.addEventListener("load", () => {
+                    this.changeDrawImage(reader.result)
+                    value = reader.result;
+                    this.setState({
+                        [name]: value
+                    })
+                }, false);
 
-            if (file) {
-                reader.readAsDataURL(file);
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            }else{
+                alert("Het bestand dat u wilde toevoegen is geen afbeelding")
             }
-
         }else{
             this.setState({
                 [name]: value
@@ -90,6 +94,8 @@ class TumbnailCanvas extends React.Component{
                             const blob = await clipboardItem.getType(type);
                             var url=URL.createObjectURL(blob)
                             this.changeDrawImage(url)
+                        }else{
+                            alert("U heeft geen geldige afbeelding gekopieërd.")
                         }
                     }
                 } catch (e) {
@@ -179,17 +185,20 @@ class TumbnailCanvas extends React.Component{
     moveButtonHandler(x,y){
         var multiplyer=2
         return((event)=>{
-            this.interval=setInterval(()=>{
+            var interval=setInterval(()=>{
             this.imageInfo.x-=x*multiplyer
             this.imageInfo.y-=y*multiplyer
             this.draw()
-            },50)})
+            },50)
+            this.mouseDown.push(interval)
+        })
+
 
     }
 
     scaleButtonHandler(plus){
         return((event)=>{
-            this.interval=setInterval(()=>
+            var interval=setInterval(()=>
                 {
                     console.log("scale")
                     var extra=1.01
@@ -200,7 +209,7 @@ class TumbnailCanvas extends React.Component{
                     this.imageInfo.height*=extra
                     this.draw()
                 },50)
-
+            this.mouseDown.push(interval)
         })
     }
 
@@ -226,9 +235,14 @@ class TumbnailCanvas extends React.Component{
         var link=document.createElement('a')
         document.body.appendChild(link)
         link.href=canvas.toDataURL()
-        link.download=`Banner ${this.state.title}.png`
+        link.download=`Banner '${this.state.title}'.png`
         link.click()
         document.body.removeChild(link)
+    }
+
+    clearAllInterVals(){
+        this.mouseDown.forEach(value => clearInterval(value))
+        this.mouseDown=[]
     }
 
     render() {
@@ -236,37 +250,37 @@ class TumbnailCanvas extends React.Component{
             <div className="ThumbnailPage">
                 <header>
                     <ol className="uitleg">
-                        <li>Kopieër een Afbeelding en klik op "Afbeelding van klembord" of upload een Afbeelding door op de knop 'Bestand Kiezen' te klikken om een achtergrond te kiezen.</li>
+                        <li>Kopieër een Afbeelding en klik op "Afbeelding van klembord" of upload een Afbeelding door op de knop 'Bestand Kiezen' te klikken om een achtergrond toe te voegen.</li>
                         <li>Gebruik de knoppen om de afbeelding aan te passen. Of sleep de afbeelding om hem te verplaatsen.</li>
-                        <li>Vanader de tekst in het vakje "Thumnail Tekst" om een titel toe te voegen</li>
-                        <li>Klik op dowload Tumbnail om hem te dowloaden als afbeelding</li>
+                        <li>Verander de tekst in het vakje "Thumnail Tekst" om een titel toe te voegen.</li>
+                        <li>Klik op "Dowload Tumbnail" om hem te dowloaden als afbeelding.</li>
                     </ol>
 
                     <div className="editFields">
                         <label>Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
-                        <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" value={this.state.image} onChange={this.handleInputChange}/></label>
+                        <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" accept="image/*" value={this.state.image} onChange={this.handleInputChange}/></label>
                         <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
                     </div>
                     <div className="imageChanger">
                         <div className="imagePosition changeGroup">
                             <p>Verander Positie:</p>
                             <div className="changeButtons">
-                                <i className="material-icons" onMouseDown={this.moveButtonHandler(0,1)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_up</i>
-                                <i className="material-icons" onMouseDown={this.moveButtonHandler(0,-1)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_down</i>
-                                <i className="material-icons" onMouseDown={this.moveButtonHandler(1,0)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_left</i>
-                                <i className="material-icons" onMouseDown={this.moveButtonHandler(-1,0)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_right</i>
+                                <i className="material-icons" onTouchStart={this.moveButtonHandler(0,1)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals} onMouseDown={this.moveButtonHandler(0,1)} onMouseUp={this.clearAllInterVals} >keyboard_arrow_up</i>
+                                <i className="material-icons" onTouchStart={this.moveButtonHandler(0,-1)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(0,-1)} onMouseUp={this.clearAllInterVals} >keyboard_arrow_down</i>
+                                <i className="material-icons" onTouchStart={this.moveButtonHandler(1,0)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(1,0)} onMouseUp={this.clearAllInterVals}  >keyboard_arrow_left</i>
+                                <i className="material-icons" onTouchStart={this.moveButtonHandler(-1,0)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(-1,0)} onMouseUp={this.clearAllInterVals}  >keyboard_arrow_right</i>
                             </div>
                         </div>
                         <div className="imageScale changeGroup">
                             <p>Verander Grootte:</p>
                             <div className="changeButtons">
-                                <i className="material-icons"  onMouseDown={this.scaleButtonHandler(true) } onMouseUp={()=> clearInterval(this.interval)}>add</i>
-                                <i className="material-icons"  onMouseDown={this.scaleButtonHandler(false)} onMouseUp={()=> clearInterval(this.interval)}>remove</i>
+                                <i className="material-icons"  onTouchStart={this.scaleButtonHandler(true) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(true) } onMouseUp={this.clearAllInterVals} >add</i>
+                                <i className="material-icons" onTouchStart={this.scaleButtonHandler(false) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(false)} onMouseUp={this.clearAllInterVals} >remove</i>
                             </div>
                         </div>
                     </div>
                 </header>
-                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px"   onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
                 <footer>
                     <button onClick={this.dowloaden}><i className="material-icons">get_app</i> Download Thumbnail</button>
                 </footer>
