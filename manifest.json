@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Thumbnail Generator",
+  "name": "Rtv Krimpenerwaard Thumbnail Generator",
+  "description": "Met deze website kan je Thumbnail Generenen voor Youtube en Facebook van RTV Krimpenerwaard",
   "icons": [
     {
       "src": "favicon.png",
