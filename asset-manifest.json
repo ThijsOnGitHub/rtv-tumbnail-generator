@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.css": "thumbnail.thijsgeurts.nl/static/css/main.9a652a0e.chunk.css",
-    "main.js": "thumbnail.thijsgeurts.nl/static/js/main.54224d39.chunk.js",
-    "main.js.map": "thumbnail.thijsgeurts.nl/static/js/main.54224d39.chunk.js.map",
-    "runtime~main.js": "thumbnail.thijsgeurts.nl/static/js/runtime~main.cba5d256.js",
-    "runtime~main.js.map": "thumbnail.thijsgeurts.nl/static/js/runtime~main.cba5d256.js.map",
-    "static/js/2.415192ef.chunk.js": "thumbnail.thijsgeurts.nl/static/js/2.415192ef.chunk.js",
-    "static/js/2.415192ef.chunk.js.map": "thumbnail.thijsgeurts.nl/static/js/2.415192ef.chunk.js.map",
-    "index.html": "thumbnail.thijsgeurts.nl/index.html",
-    "precache-manifest.0b65e2eb7936201c0e628c03d05c38f8.js": "thumbnail.thijsgeurts.nl/precache-manifest.0b65e2eb7936201c0e628c03d05c38f8.js",
-    "service-worker.js": "thumbnail.thijsgeurts.nl/service-worker.js",
-    "static/css/main.9a652a0e.chunk.css.map": "thumbnail.thijsgeurts.nl/static/css/main.9a652a0e.chunk.css.map",
-    "static/media/logo.svg": "thumbnail.thijsgeurts.nl/static/media/logo.ee7cd8ed.svg"
+    "main.css": "/static/css/main.9a652a0e.chunk.css",
+    "main.js": "/static/js/main.55a32905.chunk.js",
+    "main.js.map": "/static/js/main.55a32905.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.5c046953.js",
+    "runtime~main.js.map": "/static/js/runtime~main.5c046953.js.map",
+    "static/js/2.415192ef.chunk.js": "/static/js/2.415192ef.chunk.js",
+    "static/js/2.415192ef.chunk.js.map": "/static/js/2.415192ef.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.e8d5c5cda253eaf5d10c872a674634c5.js": "/precache-manifest.e8d5c5cda253eaf5d10c872a674634c5.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.9a652a0e.chunk.css.map": "/static/css/main.9a652a0e.chunk.css.map",
+    "static/media/logo.svg": "/static/media/logo.ee7cd8ed.svg"
   }
 }
