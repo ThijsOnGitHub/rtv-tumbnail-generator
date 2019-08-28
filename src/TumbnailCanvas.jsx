@@ -5,7 +5,7 @@ class TumbnailCanvas extends React.Component{
 
     constructor(){
         super()
-
+        this.mouseDown=false
         this.inputRef = React.createRef();
 
         this.handleInputChange = this.handleInputChange.bind(this);
@@ -13,6 +13,7 @@ class TumbnailCanvas extends React.Component{
         this.draw=this.draw.bind(this)
         this.scrollHandler=this.scrollHandler.bind(this)
         this.mouseMoveEvent=this.mouseMoveEvent.bind(this)
+        this.dowloaden=this.dowloaden.bind(this)
 
         this.rtvLogo=new Image()
         this.rtvLogo.src='../../logoRtv.png'
@@ -175,6 +176,35 @@ class TumbnailCanvas extends React.Component{
         this.draw()
     }
 
+    moveButtonHandler(x,y){
+        var multiplyer=2
+        return((event)=>{
+            this.interval=setInterval(()=>{
+            this.imageInfo.x-=x*multiplyer
+            this.imageInfo.y-=y*multiplyer
+            this.draw()
+            },50)})
+
+    }
+
+    scaleButtonHandler(plus){
+        return((event)=>{
+            this.interval=setInterval(()=>
+                {
+                    console.log("scale")
+                    var extra=1.01
+                    if(!plus){
+                        extra=0.99
+                    }
+                    this.imageInfo.width *=extra
+                    this.imageInfo.height*=extra
+                    this.draw()
+                },50)
+
+        })
+    }
+
+
     mouseMoveEvent(event){
        if(event.buttons===1){
            if(this.mouseX!==null){
@@ -189,6 +219,7 @@ class TumbnailCanvas extends React.Component{
            this.mouseY=null
        }
     }
+
 
     dowloaden(){
         var canvas=this.inputRef.current
@@ -206,22 +237,38 @@ class TumbnailCanvas extends React.Component{
                 <header>
                     <ol className="uitleg">
                         <li>Kopieër een Afbeelding en klik op "Afbeelding van klembord" of upload een Afbeelding door op de knop 'Bestand Kiezen' te klikken om een achtergrond te kiezen.</li>
-                        <li>Scroll over de Afbeelding om hem groter of kleiner te maken en sleep de afbeelding om het te verplaatsen.</li>
+                        <li>Gebruik de knoppen om de afbeelding aan te passen. Of sleep de afbeelding om hem te verplaatsen.</li>
                         <li>Vanader de tekst in het vakje "Thumnail Tekst" om een titel toe te voegen</li>
                         <li>Klik op dowload Tumbnail om hem te dowloaden als afbeelding</li>
                     </ol>
 
                     <div className="editFields">
-                        <label>Thumbnail Text: <input type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
+                        <label>Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
                         <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" value={this.state.image} onChange={this.handleInputChange}/></label>
                         <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
                     </div>
+                    <div className="imageChanger">
+                        <div className="imagePosition changeGroup">
+                            <p>Verander Positie:</p>
+                            <div className="changeButtons">
+                                <i className="material-icons" onMouseDown={this.moveButtonHandler(0,1)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_up</i>
+                                <i className="material-icons" onMouseDown={this.moveButtonHandler(0,-1)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_down</i>
+                                <i className="material-icons" onMouseDown={this.moveButtonHandler(1,0)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_left</i>
+                                <i className="material-icons" onMouseDown={this.moveButtonHandler(-1,0)} onMouseUp={()=> clearInterval(this.interval)} >keyboard_arrow_right</i>
+                            </div>
+                        </div>
+                        <div className="imageScale changeGroup">
+                            <p>Verander Grootte:</p>
+                            <div className="changeButtons">
+                                <i className="material-icons"  onMouseDown={this.scaleButtonHandler(true) } onMouseUp={()=> clearInterval(this.interval)}>add</i>
+                                <i className="material-icons"  onMouseDown={this.scaleButtonHandler(false)} onMouseUp={()=> clearInterval(this.interval)}>remove</i>
+                            </div>
+                        </div>
+                    </div>
                 </header>
-                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onWheel={this.scrollHandler}  onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px"   onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
                 <footer>
-                    <button onClick={this.dowloaden}><i className="material-icons">
-                        get_app
-                    </i> Download Thumbnail</button>
+                    <button onClick={this.dowloaden}><i className="material-icons">get_app</i> Download Thumbnail</button>
                 </footer>
             </div>
 

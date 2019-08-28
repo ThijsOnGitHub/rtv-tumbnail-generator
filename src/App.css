@@ -1,6 +1,32 @@
 .ThumbnailPage{
   margin: 0px 5%;
 }
+.titleInput{
+  border-radius: 5px;
+  border: darkgray 2px solid;
+  padding: 5px;
+}
+.changeButtons > i{
+  user-select: none;
+  background-color: dodgerblue;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  margin: 5px;
+  cursor: pointer;
+}
+
+
+.imageChanger{
+display: flex;
+  justify-content: space-evenly;
+}
+.changeGroup{
+  text-align: center;
+display: flex;
+  justify-items: center;
+  flex-direction: column;
+}
 
 body{
   background-color: dimgray;
