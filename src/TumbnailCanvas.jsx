@@ -23,7 +23,7 @@ class TumbnailCanvas extends React.Component{
         this.imageInfo={x:0,y:0,width:1280,height:720}
 
         this.state={
-            title:"Hallo",
+            title:"Verander deze tekst",
             image:null,
             imageShow:null
         }
@@ -205,21 +205,23 @@ class TumbnailCanvas extends React.Component{
             <div className="ThumbnailPage">
                 <header>
                     <ol className="uitleg">
-                        <li>Kopieër een bestand en klik op Afbeelding van klembord of upload een Afbeelding door de knop 'Bestand Kiezen' om een achtergrond te kiezen.</li>
-                        <li>Scroll over de Afbeelding om hem groter te maken en sleep de afbeelding om het te verplaatsen.</li>
-                        <li>Vul een titel in om de tekst te veranderen</li>
-                        <li>klik op dowload Tumbnail om hem te dowloaden</li>
+                        <li>Kopieër een Afbeelding en klik op "Afbeelding van klembord" of upload een Afbeelding door op de knop 'Bestand Kiezen' te klikken om een achtergrond te kiezen.</li>
+                        <li>Scroll over de Afbeelding om hem groter of kleiner te maken en sleep de afbeelding om het te verplaatsen.</li>
+                        <li>Vanader de tekst in het vakje "Thumnail Tekst" om een titel toe te voegen</li>
+                        <li>Klik op dowload Tumbnail om hem te dowloaden als afbeelding</li>
                     </ol>
 
                     <div className="editFields">
                         <label>Thumbnail Text: <input type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
                         <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" value={this.state.image} onChange={this.handleInputChange}/></label>
-                        <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}>Afbeedling van klembord</button></label>
+                        <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
                     </div>
                 </header>
                 <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onWheel={this.scrollHandler}  onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
                 <footer>
-                    <button onClick={this.dowloaden}>Download Thumbnail</button>
+                    <button onClick={this.dowloaden}><i className="material-icons">
+                        get_app
+                    </i> Download Thumbnail</button>
                 </footer>
             </div>
 
