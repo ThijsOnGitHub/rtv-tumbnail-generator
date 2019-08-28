@@ -9,12 +9,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "rtv logo 192.png",
+      "src": "rtvLogo192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "rtv logo 512.png",
+      "src": "rtvLogo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
