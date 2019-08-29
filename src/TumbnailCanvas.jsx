@@ -139,21 +139,21 @@ class TumbnailCanvas extends React.Component{
 
 
         var height=120
-        var path=new Path2D()
+        ctx.beginPath()
+        ctx.moveTo(1280,0)
+        ctx.lineTo(0,0)
+        ctx.lineTo(1280,height)
+        ctx.lineTo(1280,0)
         ctx.fillStyle="white"
-        path.moveTo(1280,0)
-        path.lineTo(0,0)
-        path.lineTo(1280,height)
-        path.lineTo(1280,0)
         ctx.fill(path)
 
-
-        var path=new Path2D()
+        
+        ctx.beginPath()
+        ctx.moveTo(0,720)
+        ctx.lineTo(1280,720)
+        ctx.lineTo(0,720-height)
+        ctx.lineTo(0,720)
         ctx.fillStyle="red"
-        path.moveTo(0,720)
-        path.lineTo(1280,720)
-        path.lineTo(0,720-height)
-        path.lineTo(0,720)
         ctx.fill(path)
 
         ctx.fillStyle="white"

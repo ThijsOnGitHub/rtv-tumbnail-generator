@@ -92,6 +92,12 @@
       <envs />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="JavaScript Debug.Debug Application" />
+      <item itemvalue="npm.build" />
+      <item itemvalue="npm.deploy" />
+      <item itemvalue="npm.npm start" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="npm.deploy" />
