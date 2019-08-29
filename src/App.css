@@ -16,14 +16,20 @@
   cursor: pointer;
 }
 
-
-.imageChanger{
-display: flex;
-  justify-content: space-evenly;
+.stepButtons{
+  margin: 10px;
 }
+.imageChanger{
+  display: flex;
+  display: -ms-flexbox;
+  justify-content: space-evenly;
+  -ms-flex-pack: center;
+
+}
+
 .changeGroup{
   text-align: center;
-display: flex;
+  display: flex;
   justify-items: center;
   flex-direction: column;
 }
@@ -31,13 +37,18 @@ display: flex;
 body{
   background-color: dimgray;
 }
+
 .uitleg{
-  width: fit-content;
-  margin: auto;
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bolder;
+  background-color: #464646;
+  text-align: center;
+  border-radius: 5px;
+  margin: 10px;
 }
-.uitleg>li{
-  width: fit-content;
-}
+
+
 header{
   margin: 5px;
 }
@@ -51,25 +62,22 @@ header{
 .editFields >label{
   margin: 10px;
 }
-
-footer{
-   margin: 10px;
-   display: flex;
-   justify-content: center;
-
- }
-footer> button{
+.downloadButton{
   font-size: 20px;
   margin: 10px;
   display: flex;
   justify-content: center;
-
+}
+.stepButtons {
+  display: flex;
+  justify-content: space-evenly;
+  min-width: 1px;
 }
 canvas{
   display: block;
-  margin: auto;
   justify-self: center;
   cursor: move;
+  margin: 10px auto 50px auto;
 }
 button{
   color:white;

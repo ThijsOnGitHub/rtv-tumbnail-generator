@@ -5,6 +5,7 @@ class TumbnailCanvas extends React.Component{
 
     constructor(){
         super()
+        if(this.browserGeschikt()){
         this.mouseDown=[]
         this.inputRef = React.createRef();
 
@@ -24,14 +25,15 @@ class TumbnailCanvas extends React.Component{
 
         this.imageInfo={x:0,y:0,width:1280,height:720}
 
+        this.uitleg={1:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",2:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",3:"Voeg een titel toe.",4:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
         this.state={
             title:"Verander deze tekst",
-            image:null,
-            imageShow:null
+            stateImage:null,
+            step:1
         }
 
         this.mouseX=null;
-        this.mouseY=null
+        this.mouseY=null}
     }
 
 
@@ -40,20 +42,14 @@ class TumbnailCanvas extends React.Component{
         var value = target.type === 'checkbox' ? target.checked : target.value;
         var name = target.name;
 
-        if(name==="imageShow" ){
+        if(name==="stateImage" ){
             if(event.target.files[0].type.includes("image")) {
-                var preview = document.querySelector('img');
                 var file = document.querySelector('input[type=file]').files[0];
+                console.log(file)
                 var reader = new FileReader();
-
                 reader.addEventListener("load", () => {
                     this.changeDrawImage(reader.result)
-                    value = reader.result;
-                    this.setState({
-                        [name]: value
-                    })
                 }, false);
-
                 if (file) {
                     reader.readAsDataURL(file);
                 }
@@ -72,12 +68,12 @@ class TumbnailCanvas extends React.Component{
     }
 
     changeDrawImage(url){
-        this.setState({imageShow:url},()=>{
-            this.imageShow=new Image()
-            this.imageShow.src=this.state.imageShow
-            this.imageShow.addEventListener('load',()=>{
-                this.imageInfo.width=this.imageShow.width
-                this.imageInfo.height=this.imageShow.height
+        this.setState({stateImage:url},()=>{
+            this.Image=new Image()
+            this.Image.src=this.state.stateImage
+            this.Image.addEventListener('load',()=>{
+                this.imageInfo.width=this.Image.width
+                this.imageInfo.height=this.Image.height
                 this.draw()
             })
         })
@@ -133,8 +129,8 @@ class TumbnailCanvas extends React.Component{
         ctx.fillStyle="white"
         ctx.fillRect(0,0,1280,720)
 
-        if(this.state.imageShow!==null){
-            ctx.drawImage(this.imageShow,this.imageInfo.x,this.imageInfo.y,this.imageInfo.width,this.imageInfo.height)
+        if(this.state.stateImage!==null){
+            ctx.drawImage(this.Image,this.imageInfo.x,this.imageInfo.y,this.imageInfo.width,this.imageInfo.height)
         }
 
 
@@ -231,13 +227,17 @@ class TumbnailCanvas extends React.Component{
 
 
     dowloaden(){
-        var canvas=this.inputRef.current
-        var link=document.createElement('a')
-        document.body.appendChild(link)
-        link.href=canvas.toDataURL()
-        link.download=`Banner '${this.state.title}'.png`
-        link.click()
-        document.body.removeChild(link)
+        if(window.navigator.msSaveBlob){
+            window.navigator.msSaveBlob(this.inputRef.current.msToBlob(),`Banner '${this.state.title}'.png`)
+        }else {
+            var canvas = this.inputRef.current
+            var link = document.createElement('a')
+            document.body.appendChild(link)
+            link.href = canvas.toDataURL()
+            link.download = `Banner '${this.state.title}'.png`
+            link.click()
+            document.body.removeChild(link)
+        }
     }
 
     clearAllInterVals(){
@@ -245,23 +245,36 @@ class TumbnailCanvas extends React.Component{
         this.mouseDown=[]
     }
 
+    browserGeschikt(){
+        var ua = window.navigator.userAgent;
+        var msie = ua.indexOf("MSIE ");
+
+        if (msie > 0) // If Internet Explorer, return version number
+        {
+            alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+            return false
+        }
+        else  // If another browser, return 0
+        {
+            console.log(window.navigator.userAgent);
+        }
+
+        return true
+    }
+
     render() {
         return(
             <div className="ThumbnailPage">
+                {this.browserGeschikt()?<div>
                 <header>
-                    <ol className="uitleg">
-                        <li>Kopieër een Afbeelding en klik op "Afbeelding van klembord" of upload een Afbeelding door op de knop 'Bestand Kiezen' te klikken om een achtergrond toe te voegen.</li>
-                        <li>Gebruik de knoppen om de afbeelding aan te passen. Of sleep de afbeelding om hem te verplaatsen.</li>
-                        <li>Verander de tekst in het vakje "Thumnail Tekst" om een titel toe te voegen.</li>
-                        <li>Klik op "Dowload Tumbnail" om hem te dowloaden als afbeelding.</li>
-                    </ol>
-
+                    <p className="uitleg">{this.uitleg[this.state.step]}</p>
                     <div className="editFields">
-                        <label>Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
-                        <label>Kies Afbeelding: <input className="fileInput" type="file" name="imageShow" accept="image/*" value={this.state.image} onChange={this.handleInputChange}/></label>
-                        <label>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
+                        <label  style={{display:this.state.step!==3 ? "none":""}}>Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
+                        <label style={{display:this.state.step!==1 ? "none":""}} > Kies Afbeelding: <input className="fileInput" type="file" name="stateImage" accept="image/*"  onChange={this.handleInputChange}/></label>
+                        <label  style={{display:this.state.step!==1 ? "none":""}}>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
+                        <button onClick={this.dowloaden} className="downloadButton" style={{display:this.state.step!==4 ? "none":""}} ><i className="material-icons">get_app</i> Download Thumbnail</button>
                     </div>
-                    <div className="imageChanger">
+                    <div className="imageChanger"  style={{display:this.state.step!==2 ? "none":""}}>
                         <div className="imagePosition changeGroup">
                             <p>Verander Positie:</p>
                             <div className="changeButtons">
@@ -276,14 +289,18 @@ class TumbnailCanvas extends React.Component{
                             <div className="changeButtons">
                                 <i className="material-icons"  onTouchStart={this.scaleButtonHandler(true) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(true) } onMouseUp={this.clearAllInterVals} >add</i>
                                 <i className="material-icons" onTouchStart={this.scaleButtonHandler(false) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(false)} onMouseUp={this.clearAllInterVals} >remove</i>
+
                             </div>
                         </div>
                     </div>
+                    <div className="stepButtons">
+                        <button  style={{display:this.state.step===1 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>
+                        <button style={{display:this.state.step===4 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:oldState.step+1})})} >Volgende Stap</button>
+                        <button style={{display:this.state.step!==4 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:1,title: "Verander deze tekst",stateImage:null})},this.draw)} >Opnieuw</button>
+                    </div>
                 </header>
                 <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
-                <footer>
-                    <button onClick={this.dowloaden}><i className="material-icons">get_app</i> Download Thumbnail</button>
-                </footer>
+                </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>
 
         )
