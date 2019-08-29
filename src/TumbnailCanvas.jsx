@@ -145,16 +145,16 @@ class TumbnailCanvas extends React.Component{
         ctx.lineTo(1280,height)
         ctx.lineTo(1280,0)
         ctx.fillStyle="white"
-        ctx.fill(path)
+        ctx.fill()
 
-        
+
         ctx.beginPath()
         ctx.moveTo(0,720)
         ctx.lineTo(1280,720)
         ctx.lineTo(0,720-height)
         ctx.lineTo(0,720)
         ctx.fillStyle="red"
-        ctx.fill(path)
+        ctx.fill()
 
         ctx.fillStyle="white"
         ctx.font="60px Segoe UI"
