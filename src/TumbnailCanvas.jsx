@@ -1,4 +1,10 @@
 import React from 'react'
+import ImageMover from './ImageMover'
+import drawTemplate from "./drawCode";
+import types from "./types";
+import actions from "./actions";
+import ChooseImage from "./ChooseImage";
+import ChooseTitle from "./ChooseTitle";
 
 
 class TumbnailCanvas extends React.Component{
@@ -6,35 +12,98 @@ class TumbnailCanvas extends React.Component{
     constructor(){
         super()
         if(this.browserGeschikt()){
-        this.mouseDown=[]
         this.inputRef = React.createRef();
 
+        this.chooseTemplate = this.chooseTemplate.bind(this)
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.imagePaste=this.imagePaste.bind(this)
         this.draw=this.draw.bind(this)
         this.scrollHandler=this.scrollHandler.bind(this)
         this.mouseMoveEvent=this.mouseMoveEvent.bind(this)
         this.dowloaden=this.dowloaden.bind(this)
-        this.clearAllInterVals=this.clearAllInterVals.bind(this)
+        this.getStepAction=this.getStepAction.bind(this)
+        this.executeAfterLoading=this.executeAfterLoading.bind(this)
 
-        this.rtvLogo=new Image()
-        this.rtvLogo.src='../../logoRtv.png'
-        this.rtvLogo.addEventListener('load',()=>{
-            this.draw()
-        })
+        this.changeInfo=this.changeInfo.bind(this)
+        this.changeImage=this.changeImage.bind(this)
+        this.changeTitle=this.changeTitle.bind(this)
 
-        this.imageInfo={x:0,y:0,width:1280,height:720}
+        //this.uitleg={test:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",moveImage:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",chooseText:"Voeg een titel toe.",dowload:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
 
-        this.uitleg={1:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",2:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",3:"Voeg een titel toe.",4:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
         this.state={
-            title:"Verander deze tekst",
-            stateImage:null,
-            step:1
+            steps:[{action:actions.CHOOSETEMPLATE}],
+            step:0,
+            fields:null,
+            images:[],
+            drawCode:()=>{}
         }
 
+
+
         this.mouseX=null;
-        this.mouseY=null}
+        this.mouseY=null
+        }
     }
+
+    componentDidMount() {
+        this.chooseTemplate("standaard")
+    }
+
+    getStepAction(){
+        if(this.state.steps[this.state.step]===undefined){
+            return undefined
+        }
+        return(this.state.steps[this.state.step].action)
+    }
+
+    chooseTemplate(name){
+        var template=new drawTemplate()
+        template=template[name]
+        var images=template.images.map((value => {
+            var imageObject =new Image()
+            imageObject.src=value
+            return (imageObject)
+        }))
+
+        var steps=this.createSteps(template.fields)
+        var formatedFields=this.formatFields(template.fields)
+        this.setState({steps:steps,fields:formatedFields,images:images,drawCode:template.code})
+    }
+
+    createSteps(fields){
+        var keys= Object.keys(fields)
+        var steps=[]
+        keys.forEach(value => {
+                var item=fields[value]
+                if(item===types.IMAGE){
+                    steps.push({action:actions.CHOOSEIMAGE,key:value})
+                    steps.push({action:actions.MOVEIMAGE,key:value})
+                }else if(item===types.TEXT){
+                    steps.push({action:actions.CHOOSETEXT,key:value})
+                }else{
+                    throw new Error("Type  doesn't exist")
+                }
+            }
+        )
+        steps.push({action:actions.DOWNLOAD})
+        return steps
+    }
+
+    formatFields(fields){
+        var keys= Object.keys(fields)
+        keys.forEach(value => {
+                var item=fields[value]
+                if(item===types.IMAGE){
+                    fields[value]={info:{x:0,y:0,width:0,height:0},object:null}
+                }else if(item===types.TEXT){
+                    fields[value]=""
+                }else{
+                    throw new Error("Type doesn't exist")
+                }
+            }
+        )
+        return fields
+    }
+
 
 
     handleInputChange(event) {
@@ -42,131 +111,45 @@ class TumbnailCanvas extends React.Component{
         var value = target.type === 'checkbox' ? target.checked : target.value;
         var name = target.name;
 
-        if(name==="stateImage" ){
-            if(event.target.files[0].type.includes("image")) {
-                var file = document.querySelector('input[type=file]').files[0];
-                console.log(file)
-                var reader = new FileReader();
-                reader.addEventListener("load", () => {
-                    this.changeDrawImage(reader.result)
-                }, false);
-                if (file) {
-                    reader.readAsDataURL(file);
-                }
-            }else{
-                alert("Het bestand dat u wilde toevoegen is geen afbeelding")
-            }
-        }else{
-            this.setState({
-                [name]: value
-            }, this.draw)
-
-        }
-
-
+        this.setState({
+            [name]: value
+        })
 
     }
 
-    changeDrawImage(url){
-        this.setState({stateImage:url},()=>{
-            this.Image=new Image()
-            this.Image.src=this.state.stateImage
-            this.Image.addEventListener('load',()=>{
-                this.imageInfo.width=this.Image.width
-                this.imageInfo.height=this.Image.height
-                this.draw()
-            })
+    changeImage(image){
+        var currentStep=this.state.steps[this.state.step]
+        var currentStepIndex=currentStep.key
+        this.setState(oldState=>{
+            var fields=oldState.fields
+            fields[currentStepIndex].object=image
+            return({fields:fields})
         })
     }
 
-    async imagePaste(){
-        try {
-            const clipboardItems = await navigator.clipboard.read();
-            for (const clipboardItem of clipboardItems) {
-                try {
-                    for (const type of clipboardItem.types) {
-                        if(type.includes("image")){
-                            console.log(type)
-                            const blob = await clipboardItem.getType(type);
-                            var url=URL.createObjectURL(blob)
-                            this.changeDrawImage(url)
-                        }else{
-                            alert("U heeft geen geldige afbeelding gekopieërd.")
-                        }
-                    }
-                } catch (e) {
-                    console.error(e, e.message);
-                }
+
+
+
+    draw(images,code,fields){
+        if(this.inputRef.current!==null){
+            var ctx = this.inputRef.current.getContext('2d')
+            this.executeAfterLoading(images.slice(),()=> code(ctx, images, fields) )
+        }
+    }
+
+    executeAfterLoading(images,func){{
+        if(images.length!==0){
+            var image= images.pop()
+            var afterLoaded= ()=>this.executeAfterLoading(images,func)
+            if (!image.complete){
+                image.addEventListener('load',() => afterLoaded())
+            }else{
+                afterLoaded()
             }
-        } catch (e) {
-            console.error(e, e.message);
+        }else{
+            func()
         }
-
-    }
-
-    draw(){
-
-        function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxSize,context){
-
-            // start with a large font size
-            var fontsize=50;
-
-            // lower the font size until the text fits the canvas
-            do{
-                fontsize--;
-                context.font=fontsize+"px "+fontface;
-            }while(context.measureText(text).width>maxSize)
-
-            // draw the text
-            context.fillText(text,xPosition,yPosition);
-
-
-
-        }
-
-        var ctx=this.inputRef.current.getContext('2d')
-
-        ctx.fillStyle="white"
-        ctx.fillRect(0,0,1280,720)
-
-        if(this.state.stateImage!==null){
-            ctx.drawImage(this.Image,this.imageInfo.x,this.imageInfo.y,this.imageInfo.width,this.imageInfo.height)
-        }
-
-
-        var height=120
-        ctx.beginPath()
-        ctx.moveTo(1280,0)
-        ctx.lineTo(0,0)
-        ctx.lineTo(1280,height)
-        ctx.lineTo(1280,0)
-        ctx.fillStyle="white"
-        ctx.fill()
-
-
-        ctx.beginPath()
-        ctx.moveTo(0,720)
-        ctx.lineTo(1280,720)
-        ctx.lineTo(0,720-height)
-        ctx.lineTo(0,720)
-        ctx.fillStyle="red"
-        ctx.fill()
-
-        ctx.fillStyle="white"
-        ctx.font="60px Segoe UI"
-
-
-        fitTextOnCanvas(this.state.title,"fira sans",15,690,480,ctx);
-
-
-
-
-        var width=250
-        ctx.drawImage(this.rtvLogo,950,20,width,(width*206)/878)
-    }
-
-
-
+    }}
 
     scrollHandler(event){
         var extra=1.01
@@ -178,53 +161,25 @@ class TumbnailCanvas extends React.Component{
         this.draw()
     }
 
-    moveButtonHandler(x,y){
-        var multiplyer=2
-        return((event)=>{
-            var interval=setInterval(()=>{
-            this.imageInfo.x-=x*multiplyer
-            this.imageInfo.y-=y*multiplyer
-            this.draw()
-            },50)
-            this.mouseDown.push(interval)
-        })
-
-
-    }
-
-    scaleButtonHandler(plus){
-        return((event)=>{
-            var interval=setInterval(()=>
-                {
-                    console.log("scale")
-                    var extra=1.01
-                    if(!plus){
-                        extra=0.99
-                    }
-                    this.imageInfo.width *=extra
-                    this.imageInfo.height*=extra
-                    this.draw()
-                },50)
-            this.mouseDown.push(interval)
-        })
-    }
-
-
     mouseMoveEvent(event){
-       if(event.buttons===1){
-           if(this.mouseX!==null){
-               this.imageInfo.x-=this.mouseX-event.clientX
-               this.imageInfo.y-=this.mouseY-event.clientY
-               this.draw()
-           }
-               this.mouseX=event.clientX
-               this.mouseY=event.clientY
-       }else{
-           this.mouseX=null
-           this.mouseY=null
-       }
-    }
 
+        if(event.buttons===1&&this.getStepAction()===actions.MOVEIMAGE){
+            if(this.mouseX!==null){
+                this.changeInfo((info)=>{
+                    info.x-=this.mouseX-event.clientX
+                    info.y-=this.mouseY-event.clientY
+                    return info
+                })
+
+
+            }
+            this.mouseX=event.clientX
+            this.mouseY=event.clientY
+        }else{
+            this.mouseX=null
+            this.mouseY=null
+        }
+    }
 
     dowloaden(){
         if(window.navigator.msSaveBlob){
@@ -240,11 +195,6 @@ class TumbnailCanvas extends React.Component{
         }
     }
 
-    clearAllInterVals(){
-        this.mouseDown.forEach(value => clearInterval(value))
-        this.mouseDown=[]
-    }
-
     browserGeschikt(){
         if (/*@cc_on!@*/false || !!document.documentMode) // If Internet Explorer, return version number
         {
@@ -257,44 +207,49 @@ class TumbnailCanvas extends React.Component{
         return true
     }
 
+    changeInfo(functie){
+        var currentStep=this.state.steps[this.state.step]
+        var currentStepIndex=currentStep.key
+        var info=this.state.fields[currentStepIndex].info
+        var res=functie(info)
+        this.setState(oldState=>{
+            var fields=oldState.fields
+            fields[currentStepIndex].info=res
+            return({fields:fields})
+        })
+    }
+
+    changeTitle(text){
+        var currentStep=this.state.steps[this.state.step]
+        var currentStepIndex=currentStep.key
+        this.setState(oldState=>{
+            var fields=oldState.fields
+            fields[currentStepIndex]=text
+            return({fields:fields})
+        })
+    }
+
     render() {
         return(
             <div className="ThumbnailPage">
                 {this.browserGeschikt()?<div>
                 <header>
-                    <p className="uitleg">{this.uitleg[this.state.step]}</p>
-                    <div className="editFields">
-                        <label  style={{display:this.state.step!==3 ? "none":""}}>Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
-                        <label style={{display:this.state.step!==1 ? "none":""}} > Kies Afbeelding: <input className="fileInput" type="file" name="stateImage" accept="image/*"  onChange={this.handleInputChange}/></label>
-                        <label  style={{display:this.state.step!==1 ? "none":""}}>Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
-                        <button onClick={this.dowloaden} className="downloadButton" style={{display:this.state.step!==4 ? "none":""}} ><i className="material-icons">get_app</i> Download Thumbnail</button>
-                    </div>
-                    <div className="imageChanger"  style={{display:this.state.step!==2 ? "none":""}}>
-                        <div className="imagePosition changeGroup">
-                            <p>Verander Positie:</p>
-                            <div className="changeButtons">
-                                <i className="material-icons" onTouchStart={this.moveButtonHandler(0,1)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals} onMouseDown={this.moveButtonHandler(0,1)} onMouseUp={this.clearAllInterVals} >keyboard_arrow_up</i>
-                                <i className="material-icons" onTouchStart={this.moveButtonHandler(0,-1)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(0,-1)} onMouseUp={this.clearAllInterVals} >keyboard_arrow_down</i>
-                                <i className="material-icons" onTouchStart={this.moveButtonHandler(1,0)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(1,0)} onMouseUp={this.clearAllInterVals}  >keyboard_arrow_left</i>
-                                <i className="material-icons" onTouchStart={this.moveButtonHandler(-1,0)} onTouchEnd={this.clearAllInterVals} onMouseLeave={this.clearAllInterVals}onMouseDown={this.moveButtonHandler(-1,0)} onMouseUp={this.clearAllInterVals}  >keyboard_arrow_right</i>
-                            </div>
-                        </div>
-                        <div className="imageScale changeGroup">
-                            <p>Verander Grootte:</p>
-                            <div className="changeButtons">
-                                <i className="material-icons"  onTouchStart={this.scaleButtonHandler(true) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(true) } onMouseUp={this.clearAllInterVals} >add</i>
-                                <i className="material-icons" onTouchStart={this.scaleButtonHandler(false) } onTouchEnd={this.clearAllInterVals}onMouseLeave={this.clearAllInterVals} onMouseDown={this.scaleButtonHandler(false)} onMouseUp={this.clearAllInterVals} >remove</i>
+                    <p className="uitleg">{this.getStepAction().text}</p>
 
-                            </div>
-                        </div>
-                    </div>
+                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage infoChange={this.changeInfo} imageChange={this.changeImage}/>}
+                    {this.getStepAction()===actions.MOVEIMAGE && <ImageMover infoChange={this.changeInfo} />}
+                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle titleChange={this.changeTitle}/>}
+                    {this.getStepAction()===actions.DOWNLOAD && <button onClick={this.dowloaden} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
+
                     <div className="stepButtons">
-                        <button  style={{display:this.state.step===1 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>
-                        <button style={{display:this.state.step===4 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:oldState.step+1})})} >Volgende Stap</button>
-                        <button style={{display:this.state.step!==4 ? "none":""}} onClick={()=>this.setState(oldState=>{return({step:1,title: "Verander deze tekst",stateImage:null})},this.draw)} >Opnieuw</button>
+                        {this.state.step!==0 && <button   onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>}
+                        {this.getStepAction()!==actions.DOWNLOAD &&< button  onClick={()=>this.setState(oldState=>{return({step:oldState.step+1})})} >Volgende Stap</button>}
+                        {1!==1 && <button onClick={()=>this.setState(oldState=>{return({step:1,title: "Verander deze tekst",stateImage:null})},this.draw)} >Opnieuw</button>}
                     </div>
+
                 </header>
-                <canvas  style={{border: '2px solid black'}} width="1280px" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width="1280px" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                    {this.draw(this.state.images,this.state.drawCode,this.state.fields)}
                 </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>
 
