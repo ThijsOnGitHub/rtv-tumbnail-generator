@@ -5,6 +5,7 @@ import types from "./types";
 import actions from "./actions";
 import ChooseImage from "./ChooseImage";
 import ChooseTitle from "./ChooseTitle";
+import KeuzeMenu from "./KeuzeMenu";
 
 
 class TumbnailCanvas extends React.Component{
@@ -30,6 +31,7 @@ class TumbnailCanvas extends React.Component{
         //this.uitleg={test:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",moveImage:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",chooseText:"Voeg een titel toe.",dowload:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
 
         this.state={
+            template:"Standaard",
             steps:[{action:actions.CHOOSETEMPLATE}],
             step:0,
             fields:null,
@@ -45,14 +47,7 @@ class TumbnailCanvas extends React.Component{
     }
 
     componentDidMount() {
-        this.chooseTemplate("standaard")
-    }
-
-    getStepAction(){
-        if(this.state.steps[this.state.step]===undefined){
-            return undefined
-        }
-        return(this.state.steps[this.state.step].action)
+        this.chooseTemplate(this.state.template)
     }
 
     chooseTemplate(name){
@@ -66,12 +61,28 @@ class TumbnailCanvas extends React.Component{
 
         var steps=this.createSteps(template.fields)
         var formatedFields=this.formatFields(template.fields)
-        this.setState({steps:steps,fields:formatedFields,images:images,drawCode:template.code})
+        this.setState({template:name,steps:steps,fields:formatedFields,images:images,drawCode:template.code})
+    }
+
+    getStepAction(){
+        if(this.state.steps[this.state.step]===undefined){
+            return undefined
+        }
+        return(this.state.steps[this.state.step].action)
+     }
+
+    getCurrentStep(){
+         return this.state.steps[this.state.step]
+     }
+
+    getCurrentField(){
+        return this.state.fields[this.getCurrentStep().key]
     }
 
     createSteps(fields){
         var keys= Object.keys(fields)
         var steps=[]
+        steps.push({action:actions.CHOOSETEMPLATE})
         keys.forEach(value => {
                 var item=fields[value]
                 if(item===types.IMAGE){
@@ -95,7 +106,7 @@ class TumbnailCanvas extends React.Component{
                 if(item===types.IMAGE){
                     fields[value]={info:{x:0,y:0,width:0,height:0},object:null}
                 }else if(item===types.TEXT){
-                    fields[value]=""
+                    fields[value]="Verander deze Tekst"
                 }else{
                     throw new Error("Type doesn't exist")
                 }
@@ -116,17 +127,6 @@ class TumbnailCanvas extends React.Component{
         })
 
     }
-
-    changeImage(image){
-        var currentStep=this.state.steps[this.state.step]
-        var currentStepIndex=currentStep.key
-        this.setState(oldState=>{
-            var fields=oldState.fields
-            fields[currentStepIndex].object=image
-            return({fields:fields})
-        })
-    }
-
 
 
 
@@ -208,8 +208,7 @@ class TumbnailCanvas extends React.Component{
     }
 
     changeInfo(functie){
-        var currentStep=this.state.steps[this.state.step]
-        var currentStepIndex=currentStep.key
+        var currentStepIndex=this.getCurrentStep().key
         var info=this.state.fields[currentStepIndex].info
         var res=functie(info)
         this.setState(oldState=>{
@@ -220,11 +219,19 @@ class TumbnailCanvas extends React.Component{
     }
 
     changeTitle(text){
-        var currentStep=this.state.steps[this.state.step]
-        var currentStepIndex=currentStep.key
+        var currentStepIndex=this.getCurrentStep().key
         this.setState(oldState=>{
             var fields=oldState.fields
             fields[currentStepIndex]=text
+            return({fields:fields})
+        })
+    }
+
+    changeImage(image){
+        var currentStepIndex=this.getCurrentStep().key
+        this.setState(oldState=>{
+            var fields=oldState.fields
+            fields[currentStepIndex].object=image
             return({fields:fields})
         })
     }
@@ -235,20 +242,21 @@ class TumbnailCanvas extends React.Component{
                 {this.browserGeschikt()?<div>
                 <header>
                     <p className="uitleg">{this.getStepAction().text}</p>
-
-                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage infoChange={this.changeInfo} imageChange={this.changeImage}/>}
+                    {this.getStepAction()===actions.CHOOSETEMPLATE && <KeuzeMenu template={this.state.template} keuzeChange={this.chooseTemplate}/>}
+                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage currentImage={this.getCurrentField()} infoChange={this.changeInfo} imageChange={this.changeImage}/>}
                     {this.getStepAction()===actions.MOVEIMAGE && <ImageMover infoChange={this.changeInfo} />}
-                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle titleChange={this.changeTitle}/>}
-                    {this.getStepAction()===actions.DOWNLOAD && <button onClick={this.dowloaden} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
-
+                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle currentTitle={this.getCurrentField()} titleChange={this.changeTitle}/>}
+                    <div className="editFields">
+                        {this.getStepAction()===actions.DOWNLOAD && <button onClick={this.dowloaden} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
+                    </div>
                     <div className="stepButtons">
                         {this.state.step!==0 && <button   onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>}
                         {this.getStepAction()!==actions.DOWNLOAD &&< button  onClick={()=>this.setState(oldState=>{return({step:oldState.step+1})})} >Volgende Stap</button>}
-                        {1!==1 && <button onClick={()=>this.setState(oldState=>{return({step:1,title: "Verander deze tekst",stateImage:null})},this.draw)} >Opnieuw</button>}
+                        {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>{this.setState(oldState=>{return({step:0})});this.chooseTemplate(this.state.template)}} >Opnieuw</button>}
                     </div>
 
                 </header>
-                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width="1280px" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width="1280" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
                     {this.draw(this.state.images,this.state.drawCode,this.state.fields)}
                 </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>

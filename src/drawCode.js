@@ -17,10 +17,11 @@ import types from "./types";
  */
 
 class drawTemplate{
-    standaard={
+    Standaard={
         fields:{achtergrondFoto:types.IMAGE,title:types.TEXT},
         images:["../../logoRtv.png"],
         code:(ctx,images,fields)=>{
+
 
             function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxSize,context){
 
@@ -82,8 +83,11 @@ class drawTemplate{
 
             var width=250
             ctx.drawImage(images[0],950,20,width,(width*206)/878)
+
+
         }
     }
+
 }
 
 export default drawTemplate

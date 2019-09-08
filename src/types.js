@@ -1,5 +1,5 @@
 class types{
-    static IMAGE="This is a Image!"
-    static TEXT="This is text"
+    static IMAGE={info:{x:0,y:0,width:0,height:0},object:null}
+    static TEXT="Venader deze tekst"
 }
 export default types

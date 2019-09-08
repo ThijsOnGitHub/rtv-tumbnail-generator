@@ -4,6 +4,9 @@ class ChooseImage extends React.Component{
     constructor(){
         super()
 
+        this.state={
+            stateImage:""
+        }
         this.handleInputChange=this.handleInputChange.bind(this)
         this.uploadImage=this.uploadImage.bind(this)
         this.changeDrawImage=this.changeDrawImage.bind(this)
@@ -23,6 +26,7 @@ class ChooseImage extends React.Component{
                 this.props.imageChange(image)
             })
     }
+
 
     async imagePaste(){
         try {
@@ -78,10 +82,24 @@ class ChooseImage extends React.Component{
     }
 
     render() {
+        console.log(this.props.currentImage.object)
         return(
+            <div>
             <div className="editFields">
-                <label  >Kies Afbeelding: <input className="fileInput" type="file" name="stateImage" accept="image/*"  onChange={this.handleInputChange}/></label>
+                <label  >Kies Afbeelding: <input className="fileInput" type="file" name="stateImage" accept="image/*" value={this.state.stateImage}  onChange={this.handleInputChange}/></label>
+
                 <label  >Plak gekopieërde Afbeelding: <button onClick={this.imagePaste}> <i className="material-icons" style={{fontSize:14}}>content_paste</i>  Afbeedling van klembord</button></label>
+
+            </div>
+                {this.props.currentImage.object!==null&&
+                <div className="editFields">
+                    <button  onClick={()=>{this.props.imageChange(null);this.setState({stateImage:""})}}><i className="material-icons"style={{fontSize:14}}>delete</i> Verwijder Afbeelding</button>
+                    <div>
+                        <p style={{textAlign:"center"}}>Preview:</p>
+                        <img src={this.props.currentImage.object.src} style={{objectFit:"scale-down"}} width={100} height={100} />
+                    </div>
+                </div>
+                }
             </div>
         )
     }

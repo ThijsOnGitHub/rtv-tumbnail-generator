@@ -28,7 +28,7 @@ class ChooseTitle extends React.Component{
     render() {
         return(
             <div className="editFields">
-                <label  >Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.state.title} onChange={this.handleInputChange}/></label>
+                <label  >Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.props.currentTitle} onChange={this.handleInputChange}/></label>
             </div>
         )
     }
