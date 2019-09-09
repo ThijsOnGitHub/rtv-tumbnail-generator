@@ -117,6 +117,7 @@ class TumbnailCanvas extends React.Component{
     }
 
 
+
     handleInputChange(event) {
         var target = event.target;
         var value = target.type === 'checkbox' ? target.checked : target.value;
@@ -127,6 +128,7 @@ class TumbnailCanvas extends React.Component{
         })
 
     }
+
 
 
     draw(images,code,fields,width){
@@ -187,7 +189,7 @@ class TumbnailCanvas extends React.Component{
             this.draw(this.state.images,this.state.drawCode,this.state.fields,1920)
             canvas.toBlob(blob => {
                 var url=URL.createObjectURL(blob)
-                var name=this.state.fileName.replace(/\!\(.+\)/,eval(this.state.fileName.match(/\!\(.+\)/)[0].replace("!(","").replace(")","")))
+                var name=this.state.fileName(this.state.fields)
                 if(window.navigator.msSaveBlob){
                     window.navigator.msSaveBlob(this.inputRef.current.msToBlob(),name)
                 }else {
@@ -238,7 +240,8 @@ class TumbnailCanvas extends React.Component{
                     {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage itemChange={this.changeItem} currentImage={this.getCurrentField()}  />}
                     {this.getStepAction()===actions.MOVEIMAGE && <ImageMover itemChange={this.changeItem} />}
                     {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle itemChange={this.changeItem} type="text" currentTitle={this.getCurrentField()} />}
-                    {this.getStepAction()===actions.C &&<ChooseTitle itemChange={this.changeItem} type="number" currentTitle={this.getCurrentField()} />}
+                    {this.getStepAction()===actions.CHOOSENUMBER &&<ChooseTitle itemChange={this.changeItem} type="number" currentTitle={this.getCurrentField()} />}
+                    {this.getStepAction()===actions.CHOOSEDATE &&<ChooseTitle itemChange={this.changeItem} type="date" currentTitle={this.getCurrentField()} />}
                     <div className="editFields">
                         {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>this.dowloaden(this.inputRef.current)} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
                     </div>

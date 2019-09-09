@@ -22,6 +22,9 @@ function drawIncommingImage(ctx,fotoFields) {
         ctx.drawImage(fotoFields.object,imageInfo.x,imageInfo.y,imageInfo.width,imageInfo.height)
     }
 }
+function scaleImage(ctx,image,x,y,width) {
+    ctx.drawImage(image,x,y,width,(width*image.height)/image.width)
+}
 function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxFont,maxSize,context){
 
     // start with a large font size
@@ -41,8 +44,8 @@ function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxFont,maxSize,conte
 class drawTemplate{
     Standaard={
         fields:{achtergrondFoto:new types.Image(),title:new types.Text()},
-        images:["../../logoRtv.png"],
-        fileName:"Thumbnail `!(this.state.fields.title)`.png",
+        images:["../../logoRtvLang.png"],
+        fileName: (object)=>{return("Thumbnail `"+object.title+"`.png")},
         code:(ctx,images,fields,width)=>{
 
 
@@ -54,7 +57,7 @@ class drawTemplate{
             ctx.fillStyle="white"
             ctx.fillRect(0,0,1920,1080)
 
-
+            console.log(fields)
             drawIncommingImage(ctx,fields.achtergrondFoto)
 
 
@@ -81,7 +84,7 @@ class drawTemplate{
 
 
 
-            fitTextOnCanvas(fields.title,"fira sans",22.5,1050,80,770,ctx);
+            fitTextOnCanvas(fields.title,"fira sans",22.5,1045,80,800,ctx);
 
 
 
@@ -90,7 +93,46 @@ class drawTemplate{
             ctx.drawImage(images[0],1425,30,width,(width*309)/1317)
 
             ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+    }
 
+    De_Waard_Aan_Tafel={
+        fields:{achtergrondFoto:new types.Image(),date:new types.Date()},
+        images:["../../WATLogo.png"],
+        fileName:(object)=>{var date=new Date(object.date)
+            var months=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December']
+            return("Thumbnail De Waard Aan Tafel "+date.getDate()+" "+months[date.getMonth()]+" "+date.getFullYear()+".png")
+        },
+        code:(ctx,images,fields,width)=>{
+
+
+
+            var normalWidth=1920
+            var scale = width/normalWidth
+            ctx.scale(scale,scale)
+
+            ctx.fillStyle="white"
+            ctx.fillRect(0,0,1920,1080)
+
+
+            drawIncommingImage(ctx,fields.achtergrondFoto)
+
+
+            ctx.beginPath();
+            ctx.arc(1900, 550, 1600/2, 0, 2 * Math.PI);
+            ctx.fill();
+
+
+            ctx.fillStyle="black"
+
+            var date=new Date(fields.date)
+            var months=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December']
+            var yPos=250
+            fitTextOnCanvas(date.getDate()+" "+months[date.getMonth()]+" "+date.getFullYear(),"Open Sans",1250,yPos+575,10000,600,ctx);
+
+            scaleImage(ctx,images[0],1350,yPos,400)
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
         }
     }
 

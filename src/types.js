@@ -15,5 +15,10 @@ class types{
         value=0
         actions=[{action:actions.CHOOSENUMBER}]
     }
+
+    static Date=class{
+        value=new Date()
+        actions=[{action:actions.CHOOSEDATE}]
+    }
 }
 export default types
