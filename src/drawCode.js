@@ -16,77 +16,84 @@ import types from "./types";
 
  */
 
+function drawIncommingImage(ctx,fotoFields) {
+    if(fotoFields.object!==null){
+        var imageInfo=fotoFields.info
+        ctx.drawImage(fotoFields.object,imageInfo.x,imageInfo.y,imageInfo.width,imageInfo.height)
+    }
+}
+function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxFont,maxSize,context){
+
+    // start with a large font size
+    var fontsize=maxFont;
+
+    // lower the font size until the text fits the canvas
+    do{
+        fontsize--;
+        context.font=fontsize+"px "+fontface;
+    }while(context.measureText(text).width>maxSize)
+
+    // draw the text
+    context.fillText(text,xPosition,yPosition);
+
+}
+
 class drawTemplate{
     Standaard={
-        fields:{achtergrondFoto:types.IMAGE,title:types.TEXT},
+        fields:{achtergrondFoto:new types.Image(),title:new types.Text()},
         images:["../../logoRtv.png"],
-        code:(ctx,images,fields)=>{
-
-
-            function fitTextOnCanvas(text,fontface,xPosition,yPosition,maxSize,context){
-
-                // start with a large font size
-                var fontsize=50;
-
-                // lower the font size until the text fits the canvas
-                do{
-                    fontsize--;
-                    context.font=fontsize+"px "+fontface;
-                }while(context.measureText(text).width>maxSize)
-
-                // draw the text
-                context.fillText(text,xPosition,yPosition);
+        fileName:"Thumbnail `!(this.state.fields.title)`.png",
+        code:(ctx,images,fields,width)=>{
 
 
 
-            }
-
-
+            var normalWidth=1920
+            var scale = width/normalWidth
+            ctx.scale(scale,scale)
 
             ctx.fillStyle="white"
-            ctx.fillRect(0,0,1280,720)
+            ctx.fillRect(0,0,1920,1080)
 
 
-            if(fields.achtergrondFoto.object!==null){
-                var imageInfo=fields.achtergrondFoto.info
-                ctx.drawImage(fields.achtergrondFoto.object,imageInfo.x,imageInfo.y,imageInfo.width,imageInfo.height)
-            }
+            drawIncommingImage(ctx,fields.achtergrondFoto)
 
 
-            var height=120
+
+            var height=180
             ctx.beginPath()
-            ctx.moveTo(1280,0)
+            ctx.moveTo(1920,0)
             ctx.lineTo(0,0)
-            ctx.lineTo(1280,height)
-            ctx.lineTo(1280,0)
+            ctx.lineTo(1920,height)
+            ctx.lineTo(1920,0)
             ctx.fillStyle="white"
             ctx.fill()
 
 
             ctx.beginPath()
-            ctx.moveTo(0,720)
-            ctx.lineTo(1280,720)
-            ctx.lineTo(0,720-height)
-            ctx.lineTo(0,720)
+            ctx.moveTo(0,1080)
+            ctx.lineTo(1920,1080)
+            ctx.lineTo(0,1080-height)
+            ctx.lineTo(0,1080)
             ctx.fillStyle="red"
             ctx.fill()
 
             ctx.fillStyle="white"
-            ctx.font="60px Segoe UI"
 
 
 
-            fitTextOnCanvas(fields.title,"fira sans",15,690,480,ctx);
+            fitTextOnCanvas(fields.title,"fira sans",22.5,1050,80,770,ctx);
 
 
 
 
-            var width=250
-            ctx.drawImage(images[0],950,20,width,(width*206)/878)
+            var width=375
+            ctx.drawImage(images[0],1425,30,width,(width*309)/1317)
 
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
 
         }
     }
+
 
 }
 

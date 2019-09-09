@@ -17,11 +17,11 @@ class KeuzeMenu extends React.Component{
     }
 
     render() {
-        return(<div>
+        return(<div className="keuzeLijst">
             {this.state.keuzes.map(value => {
-                return(<div className="keuzeItem">
-                    <label>{value}</label>
-                    <input type="radio" checked={this.props.template===value} name="template" value={value} onClick={this.handleInputChange}/>
+                return(<div className="keuzeGroep">
+                    <p>{value.replace(/_/g," ")}</p>
+                    <input type="radio" style={{display:"inline-block"}} checked={this.props.template===value} name="template" value={value} onClick={this.handleInputChange}/>
                 </div>)
             })}
         </div>)

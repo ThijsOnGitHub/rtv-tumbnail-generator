@@ -21,11 +21,12 @@ class ImageMover extends React.Component{
         var multiplyer=2
         return((event)=>{
             var interval=setInterval(()=>{
-                this.props.infoChange(
-                    (info)=>{
+                this.props.itemChange(
+                    (item)=>{
+                        var info = item.info
                         info.x-=x*multiplyer
                         info.y-=y*multiplyer
-                        return info
+                        return item
                     }
                 )
 
@@ -42,10 +43,11 @@ class ImageMover extends React.Component{
                 if(!plus){
                     extra=0.99
                 }
-                this.props.infoChange((info)=>{
+                this.props.itemChange(item=>{
+                    var info=item.info
                     info.width *=extra
                     info.height*=extra
-                    return info
+                    return item
                 })
             },50)
             this.mouseDown.push(interval)

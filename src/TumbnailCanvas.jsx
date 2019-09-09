@@ -8,6 +8,7 @@ import ChooseTitle from "./ChooseTitle";
 import KeuzeMenu from "./KeuzeMenu";
 
 
+
 class TumbnailCanvas extends React.Component{
 
     constructor(){
@@ -23,10 +24,9 @@ class TumbnailCanvas extends React.Component{
         this.dowloaden=this.dowloaden.bind(this)
         this.getStepAction=this.getStepAction.bind(this)
         this.executeAfterLoading=this.executeAfterLoading.bind(this)
+        this.handleResize=this.handleResize.bind(this)
 
-        this.changeInfo=this.changeInfo.bind(this)
-        this.changeImage=this.changeImage.bind(this)
-        this.changeTitle=this.changeTitle.bind(this)
+        this.changeItem=this.changeItem.bind(this)
 
         //this.uitleg={test:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",moveImage:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",chooseText:"Voeg een titel toe.",dowload:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
 
@@ -36,7 +36,9 @@ class TumbnailCanvas extends React.Component{
             step:0,
             fields:null,
             images:[],
-            drawCode:()=>{}
+            fileNameCode:"",
+            drawCode:()=>{},
+            scale:1
         }
 
 
@@ -46,10 +48,19 @@ class TumbnailCanvas extends React.Component{
         }
     }
 
-    componentDidMount() {
-        this.chooseTemplate(this.state.template)
+    handleResize(event){
+        this.setState({scale:(window.innerWidth*0.6)/1920},(state)=> this.draw(this.state.images,this.state.drawCode,this.state.fields,1920*this.state.scale))
     }
 
+    componentDidMount() {
+        this.chooseTemplate(this.state.template)
+        window.addEventListener("resize", this.handleResize);
+        this.handleResize()
+    }
+
+    componentWillUnmount() {
+        window.addEventListener("resize", null);
+    }
     chooseTemplate(name){
         var template=new drawTemplate()
         template=template[name]
@@ -58,10 +69,9 @@ class TumbnailCanvas extends React.Component{
             imageObject.src=value
             return (imageObject)
         }))
-
         var steps=this.createSteps(template.fields)
         var formatedFields=this.formatFields(template.fields)
-        this.setState({template:name,steps:steps,fields:formatedFields,images:images,drawCode:template.code})
+        this.setState({template:name,steps:steps,fields:formatedFields,images:images,drawCode:template.code,fileName:template.fileName})
     }
 
     getStepAction(){
@@ -85,36 +95,26 @@ class TumbnailCanvas extends React.Component{
         steps.push({action:actions.CHOOSETEMPLATE})
         keys.forEach(value => {
                 var item=fields[value]
-                if(item===types.IMAGE){
-                    steps.push({action:actions.CHOOSEIMAGE,key:value})
-                    steps.push({action:actions.MOVEIMAGE,key:value})
-                }else if(item===types.TEXT){
-                    steps.push({action:actions.CHOOSETEXT,key:value})
-                }else{
-                    throw new Error("Type  doesn't exist")
-                }
+                var actionsWithKey=item.actions.map(value1 => {
+                    value1.key=value
+                    return value1
+                })
+                steps=steps.concat(actionsWithKey)
+
             }
         )
         steps.push({action:actions.DOWNLOAD})
         return steps
     }
 
+
     formatFields(fields){
         var keys= Object.keys(fields)
         keys.forEach(value => {
-                var item=fields[value]
-                if(item===types.IMAGE){
-                    fields[value]={info:{x:0,y:0,width:0,height:0},object:null}
-                }else if(item===types.TEXT){
-                    fields[value]="Verander deze Tekst"
-                }else{
-                    throw new Error("Type doesn't exist")
-                }
-            }
-        )
+                fields[value]=fields[value].value
+            })
         return fields
     }
-
 
 
     handleInputChange(event) {
@@ -129,11 +129,10 @@ class TumbnailCanvas extends React.Component{
     }
 
 
-
-    draw(images,code,fields){
+    draw(images,code,fields,width){
         if(this.inputRef.current!==null){
             var ctx = this.inputRef.current.getContext('2d')
-            this.executeAfterLoading(images.slice(),()=> code(ctx, images, fields) )
+            this.executeAfterLoading(images.slice(),()=> code(ctx, images, fields,width) )
         }
     }
 
@@ -165,10 +164,11 @@ class TumbnailCanvas extends React.Component{
 
         if(event.buttons===1&&this.getStepAction()===actions.MOVEIMAGE){
             if(this.mouseX!==null){
-                this.changeInfo((info)=>{
-                    info.x-=this.mouseX-event.clientX
-                    info.y-=this.mouseY-event.clientY
-                    return info
+                this.changeItem((item)=>{
+                    var info=item.info
+                    info.x-=(this.mouseX-event.clientX)/this.state.scale
+                    info.y-=(this.mouseY-event.clientY)/this.state.scale
+                    return item
                 })
 
 
@@ -181,18 +181,25 @@ class TumbnailCanvas extends React.Component{
         }
     }
 
-    dowloaden(){
-        if(window.navigator.msSaveBlob){
-            window.navigator.msSaveBlob(this.inputRef.current.msToBlob(),`Banner '${this.state.title}'.png`)
-        }else {
-            var canvas = this.inputRef.current
-            var link = document.createElement('a')
-            document.body.appendChild(link)
-            link.href = canvas.toDataURL()
-            link.download = `Banner '${this.state.title}'.png`
-            link.click()
-            document.body.removeChild(link)
-        }
+    dowloaden(canvas){
+        var scale=this.scale
+        this.setState({scale:1},()=>{
+            this.draw(this.state.images,this.state.drawCode,this.state.fields,1920)
+            canvas.toBlob(blob => {
+                var url=URL.createObjectURL(blob)
+                var name=this.state.fileName.replace(/\!\(.+\)/,eval(this.state.fileName.match(/\!\(.+\)/)[0].replace("!(","").replace(")","")))
+                if(window.navigator.msSaveBlob){
+                    window.navigator.msSaveBlob(this.inputRef.current.msToBlob(),name)
+                }else {
+                    var link = document.createElement('a')
+                    document.body.appendChild(link)
+                    link.href = url
+                    link.download = name
+                    link.click()
+                    document.body.removeChild(link)}
+                }
+            )
+        })
     }
 
     browserGeschikt(){
@@ -207,47 +214,33 @@ class TumbnailCanvas extends React.Component{
         return true
     }
 
-    changeInfo(functie){
+    changeItem(functie){
         var currentStepIndex=this.getCurrentStep().key
-        var info=this.state.fields[currentStepIndex].info
-        var res=functie(info)
+        var field=this.getCurrentField()
+        var res=functie(field)
         this.setState(oldState=>{
             var fields=oldState.fields
-            fields[currentStepIndex].info=res
+            fields[currentStepIndex]=res
             return({fields:fields})
         })
     }
 
-    changeTitle(text){
-        var currentStepIndex=this.getCurrentStep().key
-        this.setState(oldState=>{
-            var fields=oldState.fields
-            fields[currentStepIndex]=text
-            return({fields:fields})
-        })
-    }
 
-    changeImage(image){
-        var currentStepIndex=this.getCurrentStep().key
-        this.setState(oldState=>{
-            var fields=oldState.fields
-            fields[currentStepIndex].object=image
-            return({fields:fields})
-        })
-    }
+
 
     render() {
         return(
-            <div className="ThumbnailPage">
+            <div className="ThumbnailPage" onresize={(event)=>console.log(event)}>
                 {this.browserGeschikt()?<div>
                 <header>
                     <p className="uitleg">{this.getStepAction().text}</p>
                     {this.getStepAction()===actions.CHOOSETEMPLATE && <KeuzeMenu template={this.state.template} keuzeChange={this.chooseTemplate}/>}
-                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage currentImage={this.getCurrentField()} infoChange={this.changeInfo} imageChange={this.changeImage}/>}
-                    {this.getStepAction()===actions.MOVEIMAGE && <ImageMover infoChange={this.changeInfo} />}
-                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle currentTitle={this.getCurrentField()} titleChange={this.changeTitle}/>}
+                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage itemChange={this.changeItem} currentImage={this.getCurrentField()}  />}
+                    {this.getStepAction()===actions.MOVEIMAGE && <ImageMover itemChange={this.changeItem} />}
+                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle itemChange={this.changeItem} type="text" currentTitle={this.getCurrentField()} />}
+                    {this.getStepAction()===actions.C &&<ChooseTitle itemChange={this.changeItem} type="number" currentTitle={this.getCurrentField()} />}
                     <div className="editFields">
-                        {this.getStepAction()===actions.DOWNLOAD && <button onClick={this.dowloaden} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
+                        {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>this.dowloaden(this.inputRef.current)} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
                     </div>
                     <div className="stepButtons">
                         {this.state.step!==0 && <button   onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>}
@@ -256,8 +249,8 @@ class TumbnailCanvas extends React.Component{
                     </div>
 
                 </header>
-                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width="1280" height="720px" onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
-                    {this.draw(this.state.images,this.state.drawCode,this.state.fields)}
+                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width={1920*this.state.scale} height={1080*this.state.scale} onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                {this.draw(this.state.images,this.state.drawCode,this.state.fields,1920*this.state.scale)}
                 </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>
 

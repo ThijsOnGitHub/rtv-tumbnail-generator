@@ -1,6 +1,22 @@
 .ThumbnailPage{
   margin: 0px 5%;
 }
+.keuzeLijst{
+  display: flex;
+  justify-content: space-evenly;
+}
+.keuzeGroep{
+  display: flex;
+  flex-direction: column;
+  -webkit-justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+.keuzeGroep> input,.keuzeGroep > p{
+  width:100%;
+  margin: 0px;
+  margin-top: 5px;
+}
 .titleInput{
   border-radius: 5px;
   border: darkgray 2px solid;

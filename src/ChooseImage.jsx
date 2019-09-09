@@ -17,13 +17,15 @@ class ChooseImage extends React.Component{
             var image= new Image()
             image.src=url
             image.addEventListener('load',()=>{
-                this.props.infoChange((info)=>{
+                this.props.itemChange(item=>{
+                    console.log(item)
+                    var info=item.info
                     info.width=image.width
                     info.height=image.height
-                    return info
+                    return item
                 })
 
-                this.props.imageChange(image)
+                this.props.itemChange((item)=>{item.object=image;return item})
             })
     }
 
@@ -68,7 +70,6 @@ class ChooseImage extends React.Component{
     uploadImage(event){
         if(event.target.files[0].type.includes("image")) {
             var file = document.querySelector('input[type=file]').files[0];
-
             var reader = new FileReader();
             reader.addEventListener("load", () => {
                 this.changeDrawImage(reader.result)
@@ -93,10 +94,10 @@ class ChooseImage extends React.Component{
             </div>
                 {this.props.currentImage.object!==null&&
                 <div className="editFields">
-                    <button  onClick={()=>{this.props.imageChange(null);this.setState({stateImage:""})}}><i className="material-icons"style={{fontSize:14}}>delete</i> Verwijder Afbeelding</button>
+                    <button style={{marginTop:20}} onClick={()=>{this.props.itemChange((image)=>{image.object=null;return image});this.setState({stateImage:""})}}><i className="material-icons"style={{fontSize:14}}>delete</i> Verwijder Afbeelding</button>
                     <div>
                         <p style={{textAlign:"center"}}>Preview:</p>
-                        <img src={this.props.currentImage.object.src} style={{objectFit:"scale-down"}} width={100} height={100} />
+                        <img src={this.props.currentImage.object.src} style={{objectFit:"cover"}} width={100} height={50} />
                     </div>
                 </div>
                 }

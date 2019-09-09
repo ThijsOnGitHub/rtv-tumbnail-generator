@@ -17,7 +17,7 @@ class ChooseTitle extends React.Component{
         var value = target.type === 'checkbox' ? target.checked : target.value;
         var name = target.name;
 
-        this.props.titleChange(value)
+        this.props.itemChange(()=>{return value})
 
         this.setState({
             [name]: value
@@ -28,7 +28,7 @@ class ChooseTitle extends React.Component{
     render() {
         return(
             <div className="editFields">
-                <label  >Thumbnail Text: <input className="titleInput" type="text" name="title" value={this.props.currentTitle} onChange={this.handleInputChange}/></label>
+                <label  >Thumbnail Text: <input className="titleInput" type={this.props.type} name="title" value={this.props.currentTitle} onChange={this.handleInputChange}/></label>
             </div>
         )
     }
