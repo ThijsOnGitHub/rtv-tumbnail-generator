@@ -196,6 +196,49 @@ class drawTemplate{
             ctx.setTransform(1, 0, 0, 1, 0, 0);
         }
     }
+
+    Losse_Programma_Items={
+        fields:{
+            programmaLogo:new types.ChooseImage(["../../WATLogo.png","LogoPolitiekCafe.png"],(object)=>{
+                object.steps=[{action:actions.CHOOSEMENU,text:textNL.kiesProgramma}]
+                return object
+            }),
+            achtergrondFoto:new types.Image(object=>{
+                object.steps[0].text="Kies een achtergrond foto"
+            }),
+            title:new types.Text()
+        },
+        images:[],
+        downloadWidth:1280,
+        verhouding:"16:9",
+        fileName:(object)=>{
+            return("Thumbnail Los Item De Waard Aan Tafel '"+object.title.value+"'.png")
+        },
+        code:(ctx,images,fields,width)=>{
+            var fieldsValue=drawFunctions.formatFields(fields)
+
+            var normalWidth=1920
+            var scale = width/normalWidth
+            ctx.scale(scale,scale)
+
+            ctx.fillStyle="white"
+            ctx.fillRect(0,0,1920,1080)
+
+
+            drawFunctions.drawIncommingImage(ctx,fieldsValue.achtergrondFoto)
+
+            ctx.fillRect(0,890,normalWidth,200);
+            //ctx.drawImage(fieldsValue.programmaLogo.object,130,900,130,140);
+            drawFunctions.scaleImageHeight(ctx,fieldsValue.programmaLogo.object,175,980,130,true)
+            ctx.fillStyle="#c90b0e"
+
+            var yPos=250
+            drawFunctions.fitTextOnCanvas(fieldsValue.title,"Fira Sans",1050,1005,75,1500,ctx,true);
+
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+        }
+    }
     /*
     Test_Versie_1={
         fields:{achtergrondFoto:new types.Image(),title:new types.Text()},
