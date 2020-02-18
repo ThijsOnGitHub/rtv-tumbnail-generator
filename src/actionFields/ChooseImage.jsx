@@ -18,7 +18,7 @@ class ChooseImage extends React.Component{
             image.src=url
             image.addEventListener('load',()=>{
                 this.props.itemChange(item=>{
-                    console.log(item)
+
                     var info=item.info
                     info.width=image.width
                     info.height=image.height
@@ -83,7 +83,7 @@ class ChooseImage extends React.Component{
     }
 
     render() {
-        console.log(this.props.currentImage.object)
+
         return(
             <div>
             <div className="editFields">

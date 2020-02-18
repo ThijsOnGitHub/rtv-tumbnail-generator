@@ -1,11 +1,12 @@
 import React from 'react'
-import ImageMover from './ImageMover'
-import drawTemplate from "./drawCode";
-import types from "./types";
-import actions from "./actions";
-import ChooseImage from "./ChooseImage";
-import ChooseTitle from "./ChooseTitle";
-import KeuzeMenu from "./KeuzeMenu";
+import ImageMover from './actionFields/ImageMover'
+import drawTemplate from "./Values/drawCode";
+import types from "./Values/types";
+import actions from "./Values/actions";
+import ChooseImage from "./actionFields/ChooseImage";
+import ChangeValue from "./actionFields/ChangeValue";
+import KeuzeMenu from "./actionFields/KeuzeMenu";
+import textNL from "./Values/textNL";
 
 
 
@@ -26,7 +27,7 @@ class TumbnailCanvas extends React.Component{
         this.executeAfterLoading=this.executeAfterLoading.bind(this)
         this.handleResize=this.handleResize.bind(this)
 
-        this.changeItem=this.changeItem.bind(this)
+        this.changeItemsValue=this.changeItemsValue.bind(this)
 
         //this.uitleg={test:"Voeg een afbeelding toe door een bestand te kiezen of een afbeelding van het klembord toe te voegen.",moveImage:"Gebruik de knoppen om de afbeelding goed te zetten. Of sleep de afbeelding om hem te verplaatsen.",chooseText:"Voeg een titel toe.",dowload:"Als je tevreden bent met de Thumbnail klik op 'Download Thumbnail'."}
 
@@ -38,10 +39,9 @@ class TumbnailCanvas extends React.Component{
             images:[],
             fileNameCode:"",
             drawCode:()=>{},
-            scale:1
+            canvasWidth:1,
+            verhouding:"16:9"
         }
-
-
 
         this.mouseX=null;
         this.mouseY=null
@@ -49,7 +49,7 @@ class TumbnailCanvas extends React.Component{
     }
 
     handleResize(event){
-        this.setState({scale:(window.innerWidth*0.6)/1920},(state)=> this.draw(this.state.images,this.state.drawCode,this.state.fields,1920*this.state.scale))
+        this.setState({canvasWidth:window.innerWidth*0.6},(state)=> this.draw(this.state.images,this.state.drawCode,this.state.fields,this.state.canvasWidth))
     }
 
     componentDidMount() {
@@ -61,24 +61,50 @@ class TumbnailCanvas extends React.Component{
     componentWillUnmount() {
         window.addEventListener("resize", null);
     }
+
     chooseTemplate(name){
         var template=new drawTemplate()
         template=template[name]
+
         var images=template.images.map((value => {
             var imageObject =new Image()
             imageObject.src=value
             return (imageObject)
         }))
         var steps=this.createSteps(template.fields)
-        var formatedFields=this.formatFields(template.fields)
-        this.setState({template:name,steps:steps,fields:formatedFields,images:images,drawCode:template.code,fileName:template.fileName})
+        this.setState({template:name,steps:steps,fields:template.fields,images:images,drawCode:template.code,fileName:template.fileName,downloadWidth:template.downloadWidth,verhouding:template.verhouding})
     }
 
-    getStepAction(){
+    createSteps(fields){
+        var keys= Object.keys(fields)
+        var steps=[]
+        steps.push({action:actions.CHOOSETEMPLATE,text:textNL.kiesTemplate})
+        keys.forEach(value => {
+                var item=fields[value]
+                var actionsWithKey=item.steps.map(value1 => {
+                    value1.key=value
+                    return value1
+                })
+                steps=steps.concat(actionsWithKey)
+            }
+        )
+        steps.push({action:actions.DOWNLOAD,text:textNL.dowload})
+        return steps
+    }
+
+    getStep(){
         if(this.state.steps[this.state.step]===undefined){
             return undefined
         }
-        return(this.state.steps[this.state.step].action)
+        return(this.state.steps[this.state.step])
+    }
+
+    getStepAction(){
+        return this.getStep().action
+     }
+
+    getStepText(){
+         return this.getStep().text
      }
 
     getCurrentStep(){
@@ -89,31 +115,22 @@ class TumbnailCanvas extends React.Component{
         return this.state.fields[this.getCurrentStep().key]
     }
 
-    createSteps(fields){
-        var keys= Object.keys(fields)
-        var steps=[]
-        steps.push({action:actions.CHOOSETEMPLATE})
-        keys.forEach(value => {
-                var item=fields[value]
-                var actionsWithKey=item.actions.map(value1 => {
-                    value1.key=value
-                    return value1
-                })
-                steps=steps.concat(actionsWithKey)
+    getTemplateOptions(){
+        var keuzes= new drawTemplate()
+       keuzes=Object.keys(keuzes)
+        return keuzes
+    }
 
-            }
-        )
-        steps.push({action:actions.DOWNLOAD})
-        return steps
+    getCurrentFieldValue(){
+        return this.state.fields[this.getCurrentStep().key].value
     }
 
 
-    formatFields(fields){
-        var keys= Object.keys(fields)
-        keys.forEach(value => {
-                fields[value]=fields[value].value
-            })
-        return fields
+    getVerhoudingObject(){
+
+        var splitText=this.state.verhouding.split(":")
+        var numbers=splitText.map(value=>parseInt(value))
+        return {width:numbers[0],height:numbers[1]}
     }
 
 
@@ -128,8 +145,6 @@ class TumbnailCanvas extends React.Component{
         })
 
     }
-
-
 
     draw(images,code,fields,width){
         if(this.inputRef.current!==null){
@@ -162,14 +177,14 @@ class TumbnailCanvas extends React.Component{
         this.draw()
     }
 
-    mouseMoveEvent(event){
 
+    mouseMoveEvent(event){
         if(event.buttons===1&&this.getStepAction()===actions.MOVEIMAGE){
             if(this.mouseX!==null){
-                this.changeItem((item)=>{
+                this.changeItemsValue((item)=>{
                     var info=item.info
-                    info.x-=(this.mouseX-event.clientX)/this.state.scale
-                    info.y-=(this.mouseY-event.clientY)/this.state.scale
+                    info.x-=(this.mouseX-event.clientX)/(this.state.canvasWidth/1920)
+                    info.y-=(this.mouseY-event.clientY)/(this.state.canvasWidth/1920)
                     return item
                 })
 
@@ -184,9 +199,8 @@ class TumbnailCanvas extends React.Component{
     }
 
     dowloaden(canvas){
-        var scale=this.scale
-        this.setState({scale:1},()=>{
-            this.draw(this.state.images,this.state.drawCode,this.state.fields,1920)
+        this.setState({canvasWidth:this.state.downloadWidth},()=>{
+            this.draw(this.state.images,this.state.drawCode,this.state.fields,this.state.downloadWidth)
             canvas.toBlob(blob => {
                 var url=URL.createObjectURL(blob)
                 var name=this.state.fileName(this.state.fields)
@@ -211,49 +225,53 @@ class TumbnailCanvas extends React.Component{
         }
         else  // If another browser, return 0
         {
-            console.log(window.navigator.userAgent);
         }
         return true
     }
 
-    changeItem(functie){
+    changeItemsValue(functie){
         var currentStepIndex=this.getCurrentStep().key
         var field=this.getCurrentField()
-        var res=functie(field)
+        var res=functie(field.value)
         this.setState(oldState=>{
             var fields=oldState.fields
-            fields[currentStepIndex]=res
+            fields[currentStepIndex].value=res
             return({fields:fields})
         })
     }
 
 
-
-
     render() {
         return(
-            <div className="ThumbnailPage" onresize={(event)=>console.log(event)}>
+            <div className="ThumbnailPage" >
                 {this.browserGeschikt()?<div>
                 <header>
-                    <p className="uitleg">{this.getStepAction().text}</p>
-                    {this.getStepAction()===actions.CHOOSETEMPLATE && <KeuzeMenu template={this.state.template} keuzeChange={this.chooseTemplate}/>}
-                    {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage itemChange={this.changeItem} currentImage={this.getCurrentField()}  />}
-                    {this.getStepAction()===actions.MOVEIMAGE && <ImageMover itemChange={this.changeItem} />}
-                    {this.getStepAction()===actions.CHOOSETEXT &&<ChooseTitle itemChange={this.changeItem} type="text" currentTitle={this.getCurrentField()} />}
-                    {this.getStepAction()===actions.CHOOSENUMBER &&<ChooseTitle itemChange={this.changeItem} type="number" currentTitle={this.getCurrentField()} />}
-                    {this.getStepAction()===actions.CHOOSEDATE &&<ChooseTitle itemChange={this.changeItem} type="date" currentTitle={this.getCurrentField()} />}
+                    <p className="uitleg">{this.getStepText()}</p>
+
+                        {this.getStepAction()===actions.CHOOSETEMPLATE && <KeuzeMenu options={this.getTemplateOptions()} currentChoise={this.state.template} itemChange={(functie)=>{this.chooseTemplate(functie(""))}}/>}
+                        {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage itemChange={this.changeItemsValue} currentImage={this.getCurrentFieldValue()}  />}
+                        {this.getStepAction()===actions.MOVEIMAGE && <ImageMover itemChange={this.changeItemsValue} />}
+                        {this.getStepAction()===actions.CHOOSETEXT &&<ChangeValue itemChange={this.changeItemsValue} type="text" currentTitle={this.getCurrentFieldValue()} />}
+                        {this.getStepAction()===actions.CHOOSENUMBER &&<ChangeValue itemChange={this.changeItemsValue} type="number" currentTitle={this.getCurrentFieldValue()} />}
+                        {this.getStepAction()===actions.CHOOSEDATE &&<ChangeValue itemChange={this.changeItemsValue} type="date" currentTitle={this.getCurrentFieldValue()} />}
+                        {this.getStepAction()===actions.CHOOSEMENU && <KeuzeMenu options={this.getCurrentField().options} currentChoise={this.getCurrentFieldValue()} itemChange={this.changeItemsValue}/>}
+
                     <div className="editFields">
+
                         {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>this.dowloaden(this.inputRef.current)} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
+
                     </div>
                     <div className="stepButtons">
+
                         {this.state.step!==0 && <button   onClick={()=>this.setState(oldState=>{return({step:oldState.step-1})})} >Stap Terug</button>}
                         {this.getStepAction()!==actions.DOWNLOAD &&< button  onClick={()=>this.setState(oldState=>{return({step:oldState.step+1})})} >Volgende Stap</button>}
                         {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>{this.setState(oldState=>{return({step:0})});this.chooseTemplate(this.state.template)}} >Opnieuw</button>}
-                    </div>
 
+                    </div>
                 </header>
-                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width={1920*this.state.scale} height={1080*this.state.scale} onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
-                {this.draw(this.state.images,this.state.drawCode,this.state.fields,1920*this.state.scale)}
+
+                <canvas  style={{border: '2px solid black',cursor:this.getStepAction()===actions.MOVEIMAGE && "move"}} width={this.state.canvasWidth} height={(this.state.canvasWidth*this.getVerhoudingObject().height)/this.getVerhoudingObject().width} onMouseMove={this.mouseMoveEvent} ref={this.inputRef}></canvas>
+                {this.draw(this.state.images,this.state.drawCode,this.state.fields,this.state.canvasWidth)}
                 </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>
 

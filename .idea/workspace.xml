@@ -2,19 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="083a121b-0f8f-4acc-b28d-c0836a7f5731" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/Values/types.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/logoRtv.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/logoRtvLang.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ChooseImage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/actionFields/ChooseImage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ChooseTitle.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/actionFields/ChangeValue.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ImageMover.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/actionFields/ImageMover.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/KeuzeMenu.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/actionFields/KeuzeMenu.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/TumbnailCanvas.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/actions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/drawCode.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/drawCode.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Values/actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/drawCode.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Values/drawCode.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types.js" beforeDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
   </component>
   <component name="DatabaseView">
     <option name="SHOW_INTERMEDIATE" value="true" />
@@ -35,24 +47,40 @@
       <list>
         <option value="React" />
         <option value="HTTP Request" />
-        <option value="JavaScript File" />
         <option value="JSX React File" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\Gebruiker\Documents\GitHub\=RTV\rtv-tumbnail-generator\.idea" />
+      </set>
+    </option>
+  </component>
   <component name="ProjectId" id="1PuVNIpgYDFXKYiIxgVPpFlUfDm" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="DatabaseDriversLRU" value="postgresql" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/public" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.standard" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.standard" value="" />
     <property name="nodejs.jest.jest_package" value="$PROJECT_DIR$/node_modules/react-scripts" />
     <property name="nodejs_interpreter_path" value="node" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
@@ -62,6 +90,7 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="preferences.sourceCode.JavaScript" />
+    <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\IntelliJ IDEA 2019.2.1\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -69,23 +98,13 @@
       <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\public" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Gebruiker\Documents\GitHub\=RTV\rtv-tumbnail-generator\src\Values" />
+      <recent name="C:\Users\Gebruiker\Documents\GitHub\=RTV\rtv-tumbnail-generator\src\actionFields" />
       <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\public" />
       <recent name="C:\Users\Gebruiker\Documents\GitHub\rtv-tumbnail-generator\src" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="npm.deploy">
+  <component name="RunManager" selected="npm.npm start">
     <configuration name="Give the right steps with a video" type="JavaScriptTestRunnerJest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
@@ -198,7 +217,27 @@
       <workItem from="1567938618042" duration="25259000" />
       <workItem from="1567968089006" duration="7374000" />
       <workItem from="1568039721613" duration="4041000" />
-      <workItem from="1568055846780" duration="8039000" />
+      <workItem from="1568055846780" duration="8488000" />
+      <workItem from="1568137500264" duration="2348000" />
+      <workItem from="1568232508245" duration="150000" />
+      <workItem from="1568274300484" duration="2282000" />
+      <workItem from="1568283455584" duration="8249000" />
+      <workItem from="1568372304141" duration="7000" />
+      <workItem from="1568447603163" duration="47000" />
+      <workItem from="1568628815383" duration="2836000" />
+      <workItem from="1568633236936" duration="3705000" />
+      <workItem from="1568648012488" duration="69000" />
+      <workItem from="1569074509631" duration="3142000" />
+      <workItem from="1569151003486" duration="4321000" />
+      <workItem from="1569162800282" duration="769000" />
+      <workItem from="1569270209950" duration="1869000" />
+      <workItem from="1569318346793" duration="1599000" />
+      <workItem from="1569323064942" duration="1978000" />
+      <workItem from="1569325990235" duration="622000" />
+      <workItem from="1569329428631" duration="11000" />
+      <workItem from="1571067252720" duration="58000" />
+      <workItem from="1574503318919" duration="33000" />
+      <workItem from="1582061781125" duration="634000" />
     </task>
     <servers />
   </component>
@@ -217,5 +256,38 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="361" y="75" key="#ESLint" timestamp="1582062497828">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="361" y="75" key="#ESLint/0.0.1536.824@0.0.1536.824" timestamp="1582062497828" />
+    <state width="1492" height="79" key="GridCell.Tab.0.bottom" timestamp="1582062511693">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1492" height="79" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1582062511693" />
+    <state width="1492" height="79" key="GridCell.Tab.0.center" timestamp="1582062511693">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1492" height="79" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1582062511693" />
+    <state width="1492" height="79" key="GridCell.Tab.0.left" timestamp="1582062511693">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1492" height="79" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1582062511693" />
+    <state width="1492" height="79" key="GridCell.Tab.0.right" timestamp="1582062511693">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1492" height="79" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1582062511693" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/Values/types.js</url>
+          <line>77</line>
+          <option name="timeStamp" value="15" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -1,6 +1,6 @@
 import React from 'react'
 
-class ChooseTitle extends React.Component{
+class ChangeValue extends React.Component{
     constructor(){
         super()
         this.state={
@@ -33,4 +33,4 @@ class ChooseTitle extends React.Component{
         )
     }
 }
-export default ChooseTitle
+export default ChangeValue

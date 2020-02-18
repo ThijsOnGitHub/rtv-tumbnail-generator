@@ -6,5 +6,6 @@ class actions{
     static CHOOSETEMPLATE={text:"Kies je sjabloom."}
     static CHOOSENUMBER={text:"Kies een getal."}
     static CHOOSEDATE={text:"Choose a date."}
+    static CHOOSEMENU="ChooseMenu"
 }
 export default actions
