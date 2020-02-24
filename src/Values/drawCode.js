@@ -141,8 +141,6 @@ class drawTemplate{
         }
     }
 
-
-
     Studio_Programmas={
         fields:{
             programmaLogo:new types.ChooseImage(["../../WATLogo.png","LogoPolitiekCafe.png"],(object)=>{
@@ -151,6 +149,7 @@ class drawTemplate{
             }),
             achtergrondFoto:new types.Image(object=>{
                 object.steps[0].text="Kies een achtergrond foto"
+                return object
             }),
             date:new types.Date((object)=>{
             object.steps[0].text="Kies de opnamedatum van de Waard aan Tafel Aflevering"

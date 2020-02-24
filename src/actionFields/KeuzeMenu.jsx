@@ -16,19 +16,27 @@ class KeuzeMenu extends React.Component{
     }
 
     componentDidMount() {
+        this.updateOptions()
+    }
+
+    updateOptions=()=>{
         var options=this.props.options.map(value=>{
             if(typeof value!=='object'){
                 return {value:value}
             }
             return value
         })
-
         this.setState({options:options})
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevProps.options!==this.props.options){
+            this.updateOptions()
+       }
     }
 
     render() {
         return(<div className="keuzeLijst">
-
             {this.state.options.map((value,index) => {
                 return(<div className="keuzeGroep">
                     {

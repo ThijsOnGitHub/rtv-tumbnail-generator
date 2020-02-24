@@ -11,6 +11,7 @@
   text-align: center;
   justify-content: center;
   width: 100%;
+  margin: 10px;
 }
 .keuzeGroep > *{
   margin: auto;

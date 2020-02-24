@@ -3,7 +3,6 @@ import React from 'react'
 class ChooseImage extends React.Component{
     constructor(){
         super()
-
         this.state={
             stateImage:""
         }

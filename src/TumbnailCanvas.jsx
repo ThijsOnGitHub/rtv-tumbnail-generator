@@ -1,11 +1,6 @@
 import React from 'react'
-import ImageMover from './actionFields/ImageMover'
 import drawTemplate from "./Values/drawCode";
-import types from "./Values/types";
 import actions from "./Values/actions";
-import ChooseImage from "./actionFields/ChooseImage";
-import ChangeValue from "./actionFields/ChangeValue";
-import KeuzeMenu from "./actionFields/KeuzeMenu";
 import textNL from "./Values/textNL";
 
 
@@ -65,7 +60,6 @@ class TumbnailCanvas extends React.Component{
     chooseTemplate(name){
         var template=new drawTemplate()
         template=template[name]
-
         var images=template.images.map((value => {
             var imageObject =new Image()
             imageObject.src=value
@@ -125,15 +119,12 @@ class TumbnailCanvas extends React.Component{
         return this.state.fields[this.getCurrentStep().key].value
     }
 
-
     getVerhoudingObject(){
 
         var splitText=this.state.verhouding.split(":")
         var numbers=splitText.map(value=>parseInt(value))
         return {width:numbers[0],height:numbers[1]}
     }
-
-
 
     handleInputChange(event) {
         var target = event.target;
@@ -176,7 +167,6 @@ class TumbnailCanvas extends React.Component{
         this.imageInfo.height*=extra
         this.draw()
     }
-
 
     mouseMoveEvent(event){
         if(event.buttons===1&&this.getStepAction()===actions.MOVEIMAGE){
@@ -242,24 +232,17 @@ class TumbnailCanvas extends React.Component{
 
 
     render() {
+
         return(
             <div className="ThumbnailPage" >
                 {this.browserGeschikt()?<div>
                 <header>
                     <p className="uitleg">{this.getStepText()}</p>
 
-                        {this.getStepAction()===actions.CHOOSETEMPLATE && <KeuzeMenu options={this.getTemplateOptions()} currentChoise={this.state.template} itemChange={(functie)=>{this.chooseTemplate(functie(""))}}/>}
-                        {this.getStepAction()===actions.CHOOSEIMAGE && <ChooseImage itemChange={this.changeItemsValue} currentImage={this.getCurrentFieldValue()}  />}
-                        {this.getStepAction()===actions.MOVEIMAGE && <ImageMover itemChange={this.changeItemsValue} />}
-                        {this.getStepAction()===actions.CHOOSETEXT &&<ChangeValue itemChange={this.changeItemsValue} type="text" currentTitle={this.getCurrentFieldValue()} />}
-                        {this.getStepAction()===actions.CHOOSENUMBER &&<ChangeValue itemChange={this.changeItemsValue} type="number" currentTitle={this.getCurrentFieldValue()} />}
-                        {this.getStepAction()===actions.CHOOSEDATE &&<ChangeValue itemChange={this.changeItemsValue} type="date" currentTitle={this.getCurrentFieldValue()} />}
-                        {this.getStepAction()===actions.CHOOSEMENU && <KeuzeMenu options={this.getCurrentField().options} currentChoise={this.getCurrentFieldValue()} itemChange={this.changeItemsValue}/>}
-
                     <div className="editFields">
-
-                        {this.getStepAction()===actions.DOWNLOAD && <button onClick={()=>this.dowloaden(this.inputRef.current)} className="downloadButton" ><i className="material-icons">get_app</i> Download Thumbnail</button>}
-
+                        {
+                            this.getStepAction().functie(this)
+                        }
                     </div>
                     <div className="stepButtons">
 
