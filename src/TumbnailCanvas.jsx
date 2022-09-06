@@ -234,7 +234,10 @@ class TumbnailCanvas extends React.Component{
     render() {
 
         return(
+            <>
+            <div style={{background: 'orange', padding: 10, fontSize:15, width: '100%', textAlign:'center'}}>Er is een nieuwe versie beschikbaar. Ga naar <a href={'https://beta.thumbnail.thijsgeurts.nl'}>https://www.beta.thumbnail.thijsgeurts.nl/</a> om met deze nieuwe versie te gebruiken.</div>
             <div className="ThumbnailPage" >
+
                 {this.browserGeschikt()?<div>
                 <header>
                     <p className="uitleg">{this.getStepText()}</p>
@@ -257,7 +260,7 @@ class TumbnailCanvas extends React.Component{
                 {this.draw(this.state.images,this.state.drawCode,this.state.fields,this.state.canvasWidth)}
                 </div>:<p>Helaas je internetprogramma is niet geschikt voor deze website, probeer Google Chrome,Safari of Firefox bijvoorbeeld.</p>}
             </div>
-
+            </>
         )
     }
 }
